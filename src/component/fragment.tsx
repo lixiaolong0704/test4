@@ -1,4 +1,5 @@
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
+import MoliEditor from './editor';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -21,7 +22,11 @@ export default class Fragment extends React.Component {
                     <Input type="password"/>
 
                 </FormItem>
-                <FormItem  >
+                <FormItem label="content">
+                    <MoliEditor></MoliEditor>
+
+                </FormItem>
+                <FormItem>
                     <Button type="primary" htmlType="submit">Register</Button>
                 </FormItem>
             </Form>

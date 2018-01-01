@@ -6,7 +6,6 @@ import 'antd/dist/antd.css';
 import {Button} from 'antd';
 // const logo = require('./logo.svg');
 import {observable, computed} from 'mobx';
-import MoliEditor from './component/editor';
 
 import Fragment from './component/fragment';
 
@@ -65,7 +64,7 @@ class App extends React.Component<any, any> {
                 <div className="app__main">
 
                     <Fragment></Fragment>
-                    <MoliEditor></MoliEditor>
+
 
                 </div>
 
