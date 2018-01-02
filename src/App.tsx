@@ -1,36 +1,78 @@
 import * as React from 'react';
 import './App.css';
+import 'antd/dist/antd.css';
 
 
-import { observable, computed } from "mobx";
+import {Button} from 'antd';
+// const logo = require('./logo.svg');
+import {observable, computed} from 'mobx';
 
+import Fragment from './component/fragment';
+
+// import  {} from 'draft-js';
 class OrderLine {
     @observable price = 0;
     @observable amount = 1;
 
-    @computed get total() {
+    @computed
+    get total() {
         return this.price * this.amount;
     }
 }
 
-var a =new OrderLine();
 
-const logo = require('./logo.svg');
+var a = new OrderLine();
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+var testHtml = `
+    <div>
+     <div>fuck you ok ?</div>
+     <div>not ok cc mm</div>
+    
+</div>
+    
+
+`;
+
+
+class App extends React.Component<any, any> {
+
+    constructor(props: any) {
+        super(props);
+        // this.state = {editorState: EditorState.createEmpty()};
+        // this.onChange = (editorState:any) => this.setState({editorState});
+
+    }
+
+
+
+    render() {
+
+
+        return (
+            <div className="app">
+
+
+                <div className="app__side"></div>
+
+                {/*<div className="App-header">*/}
+
+
+                    {/*<div dangerouslySetInnerHTML={{__html: testHtml}}></div>*/}
+                    {/*<Button type="primary">fuck</Button>*/}
+                    {/*<h2>Welcome to React2222</h2>*/}
+                {/*</div>*/}
+                <div className="app__main">
+
+                    <Fragment></Fragment>
+
+
+                </div>
+
+            </div>
+        );
+    }
 }
+
+
 
 export default App;

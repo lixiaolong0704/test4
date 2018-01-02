@@ -3,14 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/draft-js": "^0.10.19",
+    "antd": "^3.1.0",
+    "babel-polyfill": "^6.26.0",
+    "draft-js": "^0.10.4",
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
+    "node-sass-chokidar": "^0.0.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts-ts": "2.8.0"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
+     "build-css": "node-sass-chokidar src/ -o src/",
+     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+    "start": "react-scripts-ts start & npm run watch-css",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
