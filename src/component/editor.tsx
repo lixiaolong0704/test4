@@ -1,8 +1,9 @@
 import 'draft-js/dist/Draft.css';
 import './editor.css';
-import {Editor, EditorState, RichUtils} from 'draft-js';
+import {Editor, EditorState, RichUtils,convertToRaw} from 'draft-js';
 import * as React from 'react';
-
+import {stateToHTML} from 'draft-js-export-html';
+import {stateFromHTML} from 'draft-js-import-html';
 
 class MoliEditor extends React.Component<any, any> {
     private onChange: any;
@@ -12,12 +13,30 @@ class MoliEditor extends React.Component<any, any> {
     private toggleBlockType: any;
     private toggleInlineStyle: any;
 
+    props: {
+        value?: any
+        onChange?:any
+    }
     state: {
         editorState: any;
+        html: string
     }
 
     refs: {
         editor: any;
+    }
+
+    componentWillReceiveProps(np) {
+        if (np.value ) {
+            if((this.state.html !== np.value)){
+                this.setState({
+                    // editorState: EditorState.createWithContent(stateFromHTML(np.value)),
+                    html: np.value
+                })
+            }
+            // if(this.state.editorState !== )
+
+        }
     }
 
     constructor(props: any) {
@@ -25,10 +44,31 @@ class MoliEditor extends React.Component<any, any> {
         // this.state = {editorState: EditorState.createEmpty()};
         // this.onChange = (editorState:any) => this.setState({editorState});
 
-        this.state = {editorState: EditorState.createEmpty()};
+        if (this.props.value) {
+            this.state = {
+                editorState: EditorState.createWithContent(stateFromHTML(this.props.value)),
+                html: this.props.value
+            };
+        } else {
+            this.state = {editorState: EditorState.createEmpty(), html: ''};
+        }
+
 
         this.focus = () => this.refs.editor.focus();
-        this.onChange = (editorState: any) => this.setState({editorState});
+        this.onChange = (editorState: any) => {
+            if (this.state.editorState) {
+                const html =stateToHTML(editorState.getCurrentContent());
+                // const html =convertToRaw(this.state.editorState.getCurrentContent());
+                this.setState({
+                    editorState,
+                    html
+                });
+                // console.log(html);
+                this.props.onChange(html);
+            }
+
+        };
+
 
         this.handleKeyCommand = (command: any) => this._handleKeyCommand(command);
         this.onTab = (e: any) => this._onTab(e);
@@ -38,6 +78,7 @@ class MoliEditor extends React.Component<any, any> {
 
     _handleKeyCommand(command: any) {
         const {editorState} = this.state;
+
         const newState = RichUtils.handleKeyCommand(editorState, command);
         if (newState) {
             this.onChange(newState);
@@ -52,6 +93,7 @@ class MoliEditor extends React.Component<any, any> {
     }
 
     _toggleBlockType(blockType: any) {
+
         this.onChange(
             RichUtils.toggleBlockType(
                 this.state.editorState,
@@ -106,6 +148,9 @@ class MoliEditor extends React.Component<any, any> {
                         spellCheck={true}
                     />
                 </div>
+                {this.state && this.state.editorState ?
+                    <div dangerouslySetInnerHTML={{__html: this.state.html}}></div> : ''}
+
             </div>
         );
 
