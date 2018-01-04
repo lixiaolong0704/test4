@@ -43,10 +43,20 @@
 
 .canvas-reader{
   -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
-   &__el:hover{
-     background-color: green;
-     color:white;
-     cursor: pointer;
+   &__el{
+     &:hover{
+       background-color: green;
+       color:white;
+       cursor: pointer;
+
+     }
+     &_selected{
+       background-color: aquamarine;
+     }
+
+
+
    }
+
 
 }
