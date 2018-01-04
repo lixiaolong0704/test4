@@ -32,9 +32,12 @@
   -ms-user-select: none;
   user-select: none;
   -o-user-select: none; }
-  .canvas-reader__el:hover {
-    background-color: green;
-    color: white;
-    cursor: pointer; }
-  .canvas-reader__el_selected {
-    background-color: aquamarine; }
+  .canvas-reader__p_el {
+    margin-right: 5px;
+    display: inline-block; }
+    .canvas-reader__p_el:hover {
+      background-color: green;
+      color: white;
+      cursor: pointer; }
+    .canvas-reader__p_el_selected {
+      background-color: aquamarine; }

@@ -9,6 +9,7 @@
     "draft-js": "^0.10.4",
     "draft-js-export-html": "^1.2.0",
     "draft-js-import-html": "^1.2.1",
+    "lodash": "^4.17.4",
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
     "node-sass-chokidar": "^0.0.3",
