@@ -26,11 +26,11 @@ class MoliEditor extends React.Component<any, any> {
         editor: any;
     }
 
-    componentWillReceiveProps(np) {
+    componentWillReceiveProps(np :any) {
         if (np.value ) {
             if((this.state.html !== np.value)){
                 this.setState({
-                    // editorState: EditorState.createWithContent(stateFromHTML(np.value)),
+                    editorState: EditorState.createWithContent(stateFromHTML(np.value)),
                     html: np.value
                 })
             }
@@ -62,9 +62,11 @@ class MoliEditor extends React.Component<any, any> {
                 this.setState({
                     editorState,
                     html
+                },()=>{
+                    this.props.onChange(html);
                 });
                 // console.log(html);
-                this.props.onChange(html);
+
             }
 
         };

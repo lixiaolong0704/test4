@@ -5,6 +5,7 @@
   "dependencies": {
     "@types/draft-js": "^0.10.19",
     "antd": "^3.1.0",
+    "axios": "^0.17.1",
     "babel-polyfill": "^6.26.0",
     "draft-js": "^0.10.4",
     "draft-js-export-html": "^1.2.0",
