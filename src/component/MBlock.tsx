@@ -9,12 +9,20 @@ import {observable, computed} from 'mobx';
 import {observer} from "mobx-react";
 import elementClass from 'element-class';
 
+var classNames = require('classnames');
+
 const uuidv1 = require('uuid/v1');
 import _ from 'lodash'
 
 function MElement(props) {
 
-    return <span className="canvas-reader__p_el" custom-key={props.tkey}>{props.children}</span>;
+    var className = classNames({
+        "canvas-reader__p_el": true,
+        "canvas-reader__p_el_active": props.isActive,
+        "canvas-reader__p_el_selected": props.isSelected
+    })
+
+    return <span className={className} custom-index={props.index}>{props.children}</span>;
 }
 
 @observer
@@ -23,12 +31,18 @@ export default class MBlock extends React.Component {
     @observable elements: any;
     @observable start: any;
     @observable end: any
+    isMouseDowning: boolean
 
+    constructor(props: any) {
+        super(props);
+        this.isMouseDowning = false;
+
+    }
 
     props: {
         content: string
     }
-    start_el: any;
+
 
     componentDidMount() {
 
@@ -46,6 +60,7 @@ export default class MBlock extends React.Component {
         var myRegexp = /([a-zA-Z’-]+|[\,\.,:])/g;
         var results = [];
         var match = myRegexp.exec(myString);
+        var index=0;
         while (match != null) {
             // matched text: match[0]
             // match start: match.index
@@ -53,8 +68,12 @@ export default class MBlock extends React.Component {
             // console.log()
             results.push({
                 text: match[0].trim(),
-                key: uuidv1()
+                key: uuidv1(),
+                isActive: false,
+                isSelected: false,
+                index
             });
+            index++;
             match = myRegexp.exec(myString);
 
         }
@@ -62,8 +81,31 @@ export default class MBlock extends React.Component {
     }
 
     findElement(target) {
-        var key = target.getAttribute("custom-key");
-        return _.find(this.elements, e => e.key === key);
+        var index =parseInt(target.getAttribute("custom-index"));
+        return _.find(this.elements, e => e.index ===index );
+    }
+
+    iteElements(downIndex,upIndex,ita){
+        var startIndex=0,endIndex=0;
+        if(downIndex<=upIndex){
+            startIndex = downIndex;
+            endIndex=upIndex;
+        }else{
+            startIndex =upIndex;
+            endIndex = downIndex;
+        }
+        console.log(startIndex+"--"+endIndex);
+        let isMeet =false;
+        _.map(this.elements,(element)=>{
+            if((element.index===startIndex) || isMeet){
+                isMeet=true;
+                ita(element);
+            }
+            if(element.index === endIndex){
+                isMeet=false;
+                ita(element);
+            }
+        })
     }
 
     onMouseDown(e) {
@@ -71,20 +113,56 @@ export default class MBlock extends React.Component {
         if (elementClass(e.target).has('canvas-reader__p_el')) {
             // this.se = e.target.innerText;
             // e.target.className.
-            elementClass(e.target).add('canvas-reader__p_el_selected')
-            this.start = this.findElement(e.target);
+            // elementClass(e.target).add('canvas-reader__p_el_active')
+            this.end = this.start = this.findElement(e.target);
+
+
+            if (this.start) {
+                this.start.isActive = true;
+            }
+            this.isMouseDowning = true;
+
         }
     }
 
     onMouseMove(e) {
-        if (elementClass(e.target).has('canvas-reader__p_el')) {
+        if (this.isMouseDowning && elementClass(e.target).has('canvas-reader__p_el')) {
+            _.map(this.elements, element => {
+                element.isActive = false;
+            })
+            this.iteElements(this.start.index,parseInt(e.target.getAttribute("custom-index")),(element)=>{
+                element.isActive=true;
+            })
             this.end = this.findElement(e.target);
+            // if (this.end) {
+            //     this.end.isActive = true;
+            // }
         }
     }
+    onMouseLeave(){
+        this.endSelect();
+        this.isMouseDowning = false;
+    }
+    endSelect(){
+        this.start = null;
+        this.end = null;
+        _.map(this.elements, element => {
+            element.isActive = false;
+        })
+    }
+    onMouseUp(e) {
 
-    onMouseUp() {
+        if(this.isMouseDowning){
+            this.iteElements(this.start.index,this.end.index,(element)=>{
+                element.isSelected=true;
+            })
+            // this.start.isSelected = true;
+            // this.end.isSelected = true;
+            this.endSelect();
 
-        this.start_el = null;
+        }
+
+        this.isMouseDowning = false;
     }
 
     render() {
@@ -95,10 +173,12 @@ export default class MBlock extends React.Component {
             <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}
                onMouseUp={this.onMouseUp.bind(this)}
                onMouseMove={this.onMouseMove.bind(this)}
+               onMouseLeave={this.onMouseLeave.bind(this)}
 
             >
-                {this.elements ? this.elements.map((el) => <MElement key={el.key}
-                                                                     tkey={el.key}>{el.text}</MElement>) : ''}
+                {this.elements ? this.elements.map((el) => <MElement isActive={el.isActive} isSelected={el.isSelected}
+                                                                     key={el.key}
+                                                                     index={el.index}>{el.text}</MElement>) : ''}
             </p>
         )
     }
