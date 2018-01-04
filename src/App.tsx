@@ -24,8 +24,7 @@ import {observable, computed} from 'mobx';
 
 import Fragment from './component/Fragment';
 import Book from './component/Book';
-
-
+import News from './component/News';
 // import  {} from 'draft-js';
 class OrderLine {
     @observable price = 0;
@@ -97,7 +96,7 @@ class App extends React.Component<any, any> {
 
             }
             getActiveKey(location){
-                var keys=['fragment','book'];
+                var keys=['fragment','book','news'];
                 var activeKey=null;
                 keys.forEach((key)=>{
                     if(matchPath(location.pathname, {path:'/'+key,strict:false,exact: false,sensitive:false })){
@@ -139,7 +138,7 @@ class App extends React.Component<any, any> {
                         <SubMenu key="sub1" title={<span><Icon type="user"/>hihi</span>}>
                             <Menu.Item key="fragment">{createNavLink('fragment')}</Menu.Item>
                             <Menu.Item key="book">{createNavLink('book')}</Menu.Item>
-                            <Menu.Item key="3">News</Menu.Item>
+                            <Menu.Item key="news">{createNavLink('news')}</Menu.Item>
                             <Menu.Item key="4">option4</Menu.Item>
                         </SubMenu>
                         <SubMenu key="sub2" title={<span><Icon type="laptop"/>subnav 2</span>}>
@@ -207,6 +206,7 @@ class App extends React.Component<any, any> {
                                     <Route path="/fragment" component={() => <div>
                                         <Fragment></Fragment></div>}/>
                                     <Route path="/book" component={(mc)=><Book match={mc}></Book>}/>
+                                        <Route   path="/news" component={(mc:any) => (<News/>)}/>
                                     </Switch>
 
                                 </Content>
