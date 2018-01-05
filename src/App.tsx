@@ -15,29 +15,47 @@ import {
     matchPath,
     Switch,
     withRouter
-} from 'react-router-dom'
+} from 'react-router-dom';
 
 
 import {Button} from 'antd';
 // const logo = require('./logo.svg');
-import {observable, computed} from 'mobx';
+import {observable, computed,autorun} from 'mobx';
 
 import Fragment from './component/Fragment';
 import Book from './component/Book';
 import News from './component/News';
+import _ from 'lodash';
+
 // import  {} from 'draft-js';
 class OrderLine {
+    constructor(){
+
+        var n = this.arr[0]
+
+        autorun(()=>{
+            // console.log(this.price);
+            // console.log(this.arr[0].name);
+            console.log(n.name);
+
+        })
+    }
     @observable price = 0;
     @observable amount = 1;
+    @observable arr:any =[{name: 'zhansan'}, {age: 24}];
 
     @computed
     get total() {
         return this.price * this.amount;
     }
+
 }
 
 
 var a = new OrderLine();
+// a.price=24;
+var bbb= a.arr[0];
+bbb.name='fffcuk';
 
 var testHtml = `
     <div>
@@ -55,11 +73,11 @@ class App extends React.Component<any, any> {
         super(props);
 
 
-
         // this.onChange = (editorState:any) => this.setState({editorState});
 
     }
-    componentDidMount(){
+
+    componentDidMount() {
         // console.log(this.context.router)
         // alert(matchPath);
     }
@@ -75,54 +93,63 @@ class App extends React.Component<any, any> {
                 match: PropTypes.object.isRequired,
                 location: PropTypes.object.isRequired,
                 history: PropTypes.object.isRequired
-            }
-            props:{
-                match:any,
-                location:any,
-                history:any
+            };
+            props: {
+                match: any,
+                location: any,
+                history: any
 
-                onLocationChange?:any
+                onLocationChange?: any
 
-            }
-            setActive({item,key}){
+            };
+
+            setActive({item, key}) {
                 // this.setState({activeKey:key});
             }
-            onLocationChange(){
-                console.log("change...");
+
+            onLocationChange() {
+                console.log('change...');
                 // this.setState({activeKey:"book"});
             }
-            constructor(props){
-                super(props)
+
+            constructor(props) {
+                super(props);
 
             }
-            getActiveKey(location){
-                var keys=['fragment','book','news'];
-                var activeKey=null;
-                keys.forEach((key)=>{
-                    if(matchPath(location.pathname, {path:'/'+key,strict:false,exact: false,sensitive:false })){
-                        activeKey =key;
+
+            getActiveKey(location) {
+                var keys = ['fragment', 'book', 'news'];
+                var activeKey = null;
+                keys.forEach((key) => {
+                    if (matchPath(location.pathname, {
+                            path: '/' + key,
+                            strict: false,
+                            exact: false,
+                            sensitive: false
+                        })) {
+                        activeKey = key;
                         // this.state={
                         //     activeKey:key
                         // }
                     }
 
-                })
+                });
                 return activeKey;
             }
 
-            state:{
-                activeKey:any
-            }
+            state: {
+                activeKey: any
+            };
+
             render() {
-                const { match , location, history } = this.props
+                const {match, location, history} = this.props;
 
                 // this.props.onLocationChange(location);
 
 
                 const createNavLink = (to: string) => {
-                    return <NavLink exact={false} activeClassName='selected'  to={`/${to}`}>{to}</NavLink>
+                    return <NavLink exact={false} activeClassName='selected' to={`/${to}`}>{to}</NavLink>;
                 };
-
 
 
                 return (
@@ -155,15 +182,13 @@ class App extends React.Component<any, any> {
                             <Menu.Item key="12">option12</Menu.Item>
                         </SubMenu>
                     </Menu>
-                )
+                );
             }
         }
 
 // Create a new component that is "connected" (to borrow redux
 // terminology) to the router.
-        const ShowTheLocationWithRouter = withRouter(ShowTheLocation)
-
-
+        const ShowTheLocationWithRouter = withRouter(ShowTheLocation);
 
 
         return (<div>
@@ -186,10 +211,7 @@ class App extends React.Component<any, any> {
                         <Layout>
                             <Sider width={200} style={{background: '#fff'}}>
 
-                                <ShowTheLocationWithRouter  ></ShowTheLocationWithRouter>
-
-
-
+                                <ShowTheLocationWithRouter></ShowTheLocationWithRouter>
 
 
                             </Sider>
@@ -202,11 +224,11 @@ class App extends React.Component<any, any> {
                                 <Content style={{background: '#fff', padding: 24, margin: 0, minHeight: 280}}>
 
                                     <Switch>
-                                    <Route exact path="/" component={() => (<div>home</div>)}/>
-                                    <Route path="/fragment" component={() => <div>
-                                        <Fragment></Fragment></div>}/>
-                                    <Route path="/book" component={(mc)=><Book match={mc}></Book>}/>
-                                        <Route   path="/news" component={(mc:any) => (<News/>)}/>
+                                        <Route exact path="/" component={() => (<div>home</div>)}/>
+                                        <Route path="/fragment" component={() => <div>
+                                            <Fragment></Fragment></div>}/>
+                                        <Route path="/book" component={(mc) => <Book match={mc}></Book>}/>
+                                        <Route path="/news" component={(mc: any) => (<News/>)}/>
                                     </Switch>
 
                                 </Content>

@@ -34,7 +34,7 @@ export default class MElement extends React.Component {
             backgroundColor = Color('#f0f0f0').darken(0.1 * this.props.isSelected).rgb().toString();
         }
         return <span style={{backgroundColor}} className={className}
-                     custom-index={this.props.index}>{this.props.isSelected+"-"+ this.props.children}</span>;
+                     custom-index={this.props.index}>{this.props.children}</span>;
     }
 
 }
