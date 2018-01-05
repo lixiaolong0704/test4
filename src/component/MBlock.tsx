@@ -9,12 +9,16 @@ const AutoCompleteOption = AutoComplete.Option;
 import {observable, computed, autorun} from 'mobx';
 import {observer} from 'mobx-react';
 import elementClass from 'element-class';
+/// <reference path="./iBlock.ts" />
+import {elementData} from './iBlock';
 
 var classNames = require('classnames');
 import MElement from './MElement';
 
 const uuidv1 = require('uuid/v1');
 import _ from 'lodash';
+
+var Color = require('color');
 
 function textNodesUnder(node) {
     var all = [];
@@ -25,14 +29,6 @@ function textNodesUnder(node) {
     return all;
 }
 
-interface elementData {
-    text: string
-    key: string
-    isActive: boolean
-    isSelected: number
-    index: number,
-    tag: any
-}
 
 @observer
 export default class MBlock extends React.Component {
@@ -59,9 +55,10 @@ export default class MBlock extends React.Component {
 
     componentDidMount() {
         var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
-       // var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a  ng. For some applications, you can use JavaScript extensions like Flow or TypeScript to `;
+        // var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a  ng. For some applications, you can use JavaScript extensions like Flow or TypeScript to `;
 
-        var htmlObject = document.createElement('p');
+        // var htmlObject = document.createElement('p');
+        var htmlObject = this.p;
         htmlObject.innerHTML = aaa;
         // var sp= document.createElement('span');
         // sp.innerText='abc';
@@ -74,19 +71,34 @@ export default class MBlock extends React.Component {
         var index = 0;
         _.map(nodes, (textNode) => {
             var _elementsDataOfTextNode = this.textToElementData(textNode.nodeValue);
-
+            // var div= document.createElement("div");
 
             var spans = _.map(_elementsDataOfTextNode, (data: elementData) => {
-                var span = document.createElement('span');
+
+
+                var span = document.createElement("span");
+                // ReactDOM.render(<MElement ref={(span)=>{
+                //
+                //
+                //     // data.tag = span;
+                //     // data.tag = span;
+                //
+                //
+                //     // span.innerText = data.text;
+                //
+                //     console.log("ffff");
+                //
+                //
+                // }} isActive={data.isActive}
+                //                           isSelected={data.isSelected}
+                //                           key={data.key}
+                //                           index={data.index}>{data.text}</MElement>, document.createElement("span"));
                 data.index = index;
                 data.tag = span;
                 this.elementsData.push(data);
-
-                span.innerText = data.text;
-
                 index++;
                 // const dd =observable(data);
-
+                console.log("aaaaa");
 
                 // autorun(()=>{
                 //     console.log("run ...");
@@ -101,29 +113,22 @@ export default class MBlock extends React.Component {
 
                 return span;
             });
+            // textNode.replaceWith(tt);
+            console.log("ffff");
+            textNode.replaceWith(...spans);
 
-
-            console.log(this.elementsData);
-            // var bb = this.elementsData[0];
-            _.map(this.elementsData, (dd) => {
-
-                autorun(() => {
-
-                    // console.log(dd.tag);
-                    ReactDOM.render(<MElement isActive={dd.isActive}
-                                              isSelected={dd.isSelected}
-                                              key={dd.key}
-                                              index={dd.index}>{dd.text}</MElement>, dd.tag);
-                    // console.log("run 11..."+d.isSelected);
-                });
+        });
+        _.map(this.elementsData, (dd) => {
+            autorun(() => {
+                this.attachStyle(dd,dd.tag);
 
             });
-
-            textNode.replaceWith(...spans);
 
         });
 
 
+
+        // ReactDOM.render(aa,this.p);
         // console.log(htmlObject);
 
         // var aaa = `As your app grows `;
@@ -132,12 +137,31 @@ export default class MBlock extends React.Component {
         // ReactDOM.render(React.createElement("p",{},htmlObject), this.p);
 
         // this.p.appendChild(htmlObject);
-        this.p.appendChild(htmlObject);
+        // this.p.appendChild(htmlObject);
         // this.elementsData = elementsData;
 
         // this.elementsData = this.textToElementData(aaa);
 
 
+    }
+
+    attachStyle(data: elementData, span) {
+        var className = classNames({
+            'canvas-reader__p_el': true,
+            'canvas-reader__p_el_active': data.isActive,
+            'canvas-reader__p_el_selected': data.isSelected
+        });
+
+
+        var backgroundColor = null;
+        if ((!data.isActive ) && (data.isSelected > 0)) {
+            backgroundColor = Color('#f0f0f0').darken(0.1 * data.isSelected).rgb().toString();
+        }
+        span.setAttribute("custom-index", data.index);
+        span.innerText = data.text;
+        span.className = className;
+        span.style.backgroundColor = backgroundColor;
+        console.log("attch");
     }
 
     textToElementData(myString: string): elementData[] {
@@ -232,11 +256,11 @@ export default class MBlock extends React.Component {
 
     onMouseLeave() {
         clearTimeout(this.h);
-        const closeUp=()=> {
+        const closeUp = () => {
             this.endSelect();
             this.isMouseDowning = false;
         }
-        this.h=setTimeout(closeUp,500);
+        this.h = setTimeout(closeUp, 2000);
     }
 
     endSelect() {
@@ -247,7 +271,8 @@ export default class MBlock extends React.Component {
         });
     }
 
-    h:any
+    h: any
+
     onMouseUp(e) {
 
         if (this.isMouseDowning) {
@@ -255,12 +280,12 @@ export default class MBlock extends React.Component {
             // const closeUp=()=>{
 
 
-                this.iteElements(this.start.index, this.end.index, (element) => {
-                    element.isSelected++;
-                });
-                // this.start.isSelected = true;
-                // this.end.isSelected = true;
-                this.endSelect();
+            this.iteElements(this.start.index, this.end.index, (element) => {
+                element.isSelected++;
+            });
+            // this.start.isSelected = true;
+            // this.end.isSelected = true;
+            this.endSelect();
             // }
             //
             // this.h=setTimeout(closeUp,500);
@@ -280,24 +305,23 @@ export default class MBlock extends React.Component {
         //                                                                              isSelected={el.isSelected}
         //                                                                              key={el.key}
         //                                                                              index={el.index}>{el.text}</MElement>) : null;
-        var a = this.elementsData;
+
 
         console.log('run block render');
         return (
-            <div>
-                <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}
-                   onMouseUp={this.onMouseUp.bind(this)}
-                   onMouseMove={this.onMouseMove.bind(this)}
-                   onMouseLeave={this.onMouseLeave.bind(this)}
-                   ref={(p) => {
-                       this.p = p;
-                   }}
-                >
+
+            <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}
+               onMouseUp={this.onMouseUp.bind(this)}
+               onMouseMove={this.onMouseMove.bind(this)}
+               onMouseLeave={this.onMouseLeave.bind(this)}
+               ref={(p) => {
+                   this.p = p;
+               }}
+            >
 
 
-                </p>
-                {/*{a?a[0].isSelected:0}*/}
-            </div>
+            </p>
+
 
         );
     }

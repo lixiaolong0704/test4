@@ -32,13 +32,15 @@
   -ms-user-select: none;
   user-select: none;
   -o-user-select: none; }
-  .canvas-reader__p_el {
-    margin: 2px 2px;
-    display: inline-block; }
-    .canvas-reader__p_el:hover {
-      cursor: pointer; }
-    .canvas-reader__p_el_selected {
-      background-color: aquamarine;
-      text-decoration: underline; }
-    .canvas-reader__p_el_active {
-      background-color: #5890ff; }
+  .canvas-reader__p {
+    background-color: antiquewhite; }
+    .canvas-reader__p_el {
+      margin: 2px 2px;
+      display: inline-block; }
+      .canvas-reader__p_el:hover {
+        cursor: pointer; }
+      .canvas-reader__p_el_selected {
+        background-color: aquamarine;
+        text-decoration: underline; }
+      .canvas-reader__p_el_active {
+        background-color: #5890ff; }
