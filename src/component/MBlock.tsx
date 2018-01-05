@@ -1,11 +1,12 @@
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import MoliEditor from './editor';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
-import {observable, computed} from 'mobx';
+import {observable, computed,autorun} from 'mobx';
 import {observer} from 'mobx-react';
 import elementClass from 'element-class';
 
@@ -43,32 +44,68 @@ export default class MBlock extends React.Component {
     @observable start: any;
     @observable end: any;
     isMouseDowning: boolean;
+    p:any
 
     constructor(props: any) {
         super(props);
         this.isMouseDowning = false;
 
     }
-
+    // @computed get el() {
+    //     return this.price * this.amount;
+    // }
 
     componentDidMount() {
         var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
 
-        // var htmlObject = document.createElement('p');
-        // htmlObject.innerHTML = aaa;
+        var htmlObject = document.createElement('p');
+        htmlObject.innerHTML = aaa;
         // var sp= document.createElement('span');
         // sp.innerText='abc';
         // // htmlObject.firstChild.replaceWith(sp);
         //
-        // var nodes= textNodesUnder(htmlObject);
-        // console.log(nodes);
+        var nodes = textNodesUnder(htmlObject);
+
+
+        this.elementsData = [];
+        var index=0;
+        _.map(nodes, (textNode) => {
+            var _elementsDataOfTextNode = this.textToElementData(textNode.nodeValue);
+
+
+            var spans = _.map(_elementsDataOfTextNode, (data: elementData) => {
+                data.index=index;
+                this.elementsData.push(data);
+                var span = document.createElement('span');
+                ;
+                span.innerText = data.text;
+                autorun(()=>{
+                    console.log("run ...");
+                    ReactDOM.render(<MElement isActive={data.isActive}
+                                              isSelected={data.isSelected}
+                                              key={data.key}
+                                              index={data.index}>{data.text}</MElement>, span);
+
+                })
+
+
+                return span;
+            });
+            textNode.replaceWith(...spans);
+
+        });
+        // console.log(htmlObject);
 
         // var aaa = `As your app grows `;
         // var rpValue = `<span class="canvas-reader__el">$1</span>`;
         // this.current= aaa.replace(/([a-zA-Z’-]+|[\,\.,:])/g, rpValue) ;
+        // ReactDOM.render(React.createElement("p",{},htmlObject), this.p);
 
+        // this.p.appendChild(htmlObject);
+        this.p.appendChild(htmlObject);
+        // this.elementsData = elementsData;
 
-        this.elementsData = this.textToElementData(aaa);
+        // this.elementsData = this.textToElementData(aaa);
 
 
     }
@@ -129,7 +166,7 @@ export default class MBlock extends React.Component {
     }
 
     onMouseDown(e) {
-        // console.log(e);
+        console.log(e);
         if (elementClass(e.target).has('canvas-reader__p_el')) {
             // this.se = e.target.innerText;
             // e.target.className.
@@ -183,6 +220,7 @@ export default class MBlock extends React.Component {
             // this.end.isSelected = true;
             this.endSelect();
 
+            // this.forceUpdate();
         }
 
         this.isMouseDowning = false;
@@ -193,20 +231,27 @@ export default class MBlock extends React.Component {
         // dangerouslySetInnerHTML={{__html: this.current}}
 
 
-        const elements = this.elementsData ? this.elementsData.map((el) => <MElement isActive={el.isActive}
-                                                                                     isSelected={el.isSelected}
-                                                                                     key={el.key}
-                                                                                     index={el.index}>{el.text}</MElement>) : null;
+        // const elements = this.elementsData ? this.elementsData.map((el) => <MElement isActive={el.isActive}
+        //                                                                              isSelected={el.isSelected}
+        //                                                                              key={el.key}
+        //                                                                              index={el.index}>{el.text}</MElement>) : null;
+        var a=this.elementsData;
 
+        console.log("run block render");
         return (
-            <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}
-               onMouseUp={this.onMouseUp.bind(this)}
-               onMouseMove={this.onMouseMove.bind(this)}
-               onMouseLeave={this.onMouseLeave.bind(this)}
+            <div>
+                <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}
+                   onMouseUp={this.onMouseUp.bind(this)}
+                   onMouseMove={this.onMouseMove.bind(this)}
+                   onMouseLeave={this.onMouseLeave.bind(this)}
+                   ref={(p) => { this.p = p; }}
+                >
 
-            >
-                {elements}
-            </p>
+
+                </p>
+                {/*{a?a[0].isSelected:0}*/}
+            </div>
+
         );
     }
 
