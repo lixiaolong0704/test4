@@ -17,7 +17,7 @@ export default class News extends React.Component {
 
     render() {
         var blocks=[];
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 1; i++) {
             blocks.push(<MBlock key={i} content={''}></MBlock>);
         }
 
