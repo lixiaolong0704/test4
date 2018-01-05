@@ -15,6 +15,22 @@ import MElement from './MElement';
 const uuidv1 = require('uuid/v1');
 import _ from 'lodash';
 
+function textNodesUnder(node) {
+    var all = [];
+    for (node = node.firstChild; node; node = node.nextSibling) {
+        if (node.nodeType == 3) all.push(node);
+        else all = all.concat(textNodesUnder(node));
+    }
+    return all;
+}
+
+interface elementData {
+    text: string
+    key: string
+    isActive: boolean
+    isSelected: number
+    index: number
+}
 
 @observer
 export default class MBlock extends React.Component {
@@ -22,7 +38,8 @@ export default class MBlock extends React.Component {
         content: string
     };
 
-    @observable elements: any;
+
+    @observable elementsData: elementData[];
     @observable start: any;
     @observable end: any;
     isMouseDowning: boolean;
@@ -35,16 +52,28 @@ export default class MBlock extends React.Component {
 
 
     componentDidMount() {
-        var aaa = `As your app grows, you can catch a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
+        var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
+
+        // var htmlObject = document.createElement('p');
+        // htmlObject.innerHTML = aaa;
+        // var sp= document.createElement('span');
+        // sp.innerText='abc';
+        // // htmlObject.firstChild.replaceWith(sp);
+        //
+        // var nodes= textNodesUnder(htmlObject);
+        // console.log(nodes);
+
         // var aaa = `As your app grows `;
         // var rpValue = `<span class="canvas-reader__el">$1</span>`;
         // this.current= aaa.replace(/([a-zA-Z’-]+|[\,\.,:])/g, rpValue) ;
-        this.elements = this.getElements(aaa);
+
+
+        this.elementsData = this.textToElementData(aaa);
 
 
     }
 
-    getElements(myString) {
+    textToElementData(myString: string): elementData[] {
 
         var myRegexp = /([a-zA-Z’-]+|[\,\.,:])/g;
         var results = [];
@@ -71,7 +100,7 @@ export default class MBlock extends React.Component {
 
     findElement(target) {
         var index = parseInt(target.getAttribute('custom-index'));
-        return _.find(this.elements, e => e.index === index);
+        return _.find(this.elementsData, e => e.index === index);
     }
 
     iteElements(downIndex, upIndex, ita) {
@@ -85,7 +114,7 @@ export default class MBlock extends React.Component {
         }
         // console.log(startIndex + "--" + endIndex);
         let isMeet = false;
-        _.map(this.elements, (element) => {
+        _.map(this.elementsData, (element) => {
             if (element.index === endIndex) {
                 isMeet = false;
                 ita(element);
@@ -118,7 +147,7 @@ export default class MBlock extends React.Component {
 
     onMouseMove(e) {
         if (this.isMouseDowning && elementClass(e.target).has('canvas-reader__p_el')) {
-            _.map(this.elements, element => {
+            _.map(this.elementsData, element => {
                 element.isActive = false;
             });
             this.iteElements(this.start.index, parseInt(e.target.getAttribute('custom-index')), (element) => {
@@ -139,7 +168,7 @@ export default class MBlock extends React.Component {
     endSelect() {
         this.start = null;
         this.end = null;
-        _.map(this.elements, element => {
+        _.map(this.elementsData, element => {
             element.isActive = false;
         });
     }
@@ -163,6 +192,12 @@ export default class MBlock extends React.Component {
         //
         // dangerouslySetInnerHTML={{__html: this.current}}
 
+
+        const elements = this.elementsData ? this.elementsData.map((el) => <MElement isActive={el.isActive}
+                                                                                     isSelected={el.isSelected}
+                                                                                     key={el.key}
+                                                                                     index={el.index}>{el.text}</MElement>) : null;
+
         return (
             <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}
                onMouseUp={this.onMouseUp.bind(this)}
@@ -170,9 +205,7 @@ export default class MBlock extends React.Component {
                onMouseLeave={this.onMouseLeave.bind(this)}
 
             >
-                {this.elements ? this.elements.map((el) => <MElement isActive={el.isActive} isSelected={el.isSelected}
-                                                                     key={el.key}
-                                                                     index={el.index}>{el.text}</MElement>) : ''}
+                {elements}
             </p>
         );
     }
