@@ -63,7 +63,7 @@ class MoliEditor extends React.Component<any, any> {
                     editorState,
                     html
                 },()=>{
-                    this.props.onChange(html);
+                    this.props.onChange && this.props.onChange(html);
                 });
                 // console.log(html);
 

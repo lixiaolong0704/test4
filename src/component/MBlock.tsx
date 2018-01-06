@@ -1,19 +1,15 @@
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import MoliEditor from './editor';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
-const FormItem = Form.Item;
-const Option = Select.Option;
-const AutoCompleteOption = AutoComplete.Option;
 import {observable, computed, autorun,action} from 'mobx';
-import {observer} from 'mobx-react';
+import {observer,inject} from 'mobx-react';
 import elementClass from 'element-class';
 /// <reference path="./iBlock.ts" />
 import {elementData} from './iBlock';
 
 var classNames = require('classnames');
-import MElement from './MElement';
+
 
 const uuidv1 = require('uuid/v1');
 import _ from 'lodash';
@@ -29,11 +25,12 @@ function textNodesUnder(node) {
     return all;
 }
 
-
+@inject("reading")
 @observer
 export default class MBlock extends React.Component {
     props: {
-        content: string
+        content: string,
+        reading?:any
     };
 
 
@@ -298,12 +295,19 @@ export default class MBlock extends React.Component {
             // const closeUp=()=>{
 
 
+            var selection='';
             this.iteElements(this.start.index, this.end.index, (element) => {
+                selection+=element.text+" ";
                 element.isSelected++;
             },()=>0);
             // this.start.isSelected = true;
             // this.end.isSelected = true;
+            if(this.end)
+                this.props.reading.setCurrent(selection);
             this.endSelect();
+
+
+
             // }
             //
             // this.h=setTimeout(closeUp,500);
