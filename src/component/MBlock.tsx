@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
-import {observable, computed, autorun} from 'mobx';
+import {observable, computed, autorun,action} from 'mobx';
 import {observer} from 'mobx-react';
 import elementClass from 'element-class';
 /// <reference path="./iBlock.ts" />
@@ -37,7 +37,8 @@ export default class MBlock extends React.Component {
     };
 
 
-    @observable elementsData: elementData[];
+    elementsData: elementData[];
+    spans: any;
     @observable start: any;
     @observable end: any;
     isMouseDowning: boolean;
@@ -68,6 +69,7 @@ export default class MBlock extends React.Component {
 
 
         this.elementsData = [];
+        this.spans = [];
         var index = 0;
         _.map(nodes, (textNode) => {
             var _elementsDataOfTextNode = this.textToElementData(textNode.nodeValue);
@@ -75,8 +77,11 @@ export default class MBlock extends React.Component {
 
             var spans = _.map(_elementsDataOfTextNode, (data: elementData) => {
 
-
+                data.index = index;
                 var span = document.createElement("span");
+                span.innerText = data.text;
+                span.setAttribute("custom-index", index + "");
+                span.setAttribute("class", "canvas-reader__p_el");
                 // ReactDOM.render(<MElement ref={(span)=>{
                 //
                 //
@@ -93,12 +98,15 @@ export default class MBlock extends React.Component {
                 //                           isSelected={data.isSelected}
                 //                           key={data.key}
                 //                           index={data.index}>{data.text}</MElement>, document.createElement("span"));
-                data.index = index;
+
+                // this.spans.push(span);
                 data.tag = span;
-                this.elementsData.push(data);
+
+                this.elementsData.push(observable(data));
+
                 index++;
                 // const dd =observable(data);
-                console.log("aaaaa");
+                // console.log("aaaaa");
 
                 // autorun(()=>{
                 //     console.log("run ...");
@@ -119,13 +127,15 @@ export default class MBlock extends React.Component {
 
         });
         _.map(this.elementsData, (dd) => {
+            // var aa=observable(dd);
             autorun(() => {
-                this.attachStyle(dd,dd.tag);
 
+                var aa = dd;
+                // console.log(aa.text + "--" + aa.isActive + "---" + aa.isSelected);
+                this.attachStyle(dd, dd.tag);
             });
 
         });
-
 
 
         // ReactDOM.render(aa,this.p);
@@ -157,11 +167,11 @@ export default class MBlock extends React.Component {
         if ((!data.isActive ) && (data.isSelected > 0)) {
             backgroundColor = Color('#f0f0f0').darken(0.1 * data.isSelected).rgb().toString();
         }
-        span.setAttribute("custom-index", data.index);
-        span.innerText = data.text;
+
+        // span.innerText = data.text;
         span.className = className;
         span.style.backgroundColor = backgroundColor;
-        console.log("attch");
+        console.log(data.text + "attch");
     }
 
     textToElementData(myString: string): elementData[] {
@@ -194,7 +204,7 @@ export default class MBlock extends React.Component {
         return _.find(this.elementsData, e => e.index === index);
     }
 
-    iteElements(downIndex, upIndex, ita) {
+    iteElements(downIndex, upIndex, ita, iteOther) {
         var startIndex = 0, endIndex = 0;
         if (downIndex <= upIndex) {
             startIndex = downIndex;
@@ -207,7 +217,10 @@ export default class MBlock extends React.Component {
         let isMeet = false, isOK = false;
 
         _.map(this.elementsData, (element) => {
-            if (isOK) return;
+            if (isOK) {
+                iteOther(element);
+                return;
+            }
             if (element.index === endIndex) {
                 isMeet = false;
                 ita(element);
@@ -217,12 +230,14 @@ export default class MBlock extends React.Component {
             if ((element.index === startIndex) || isMeet) {
                 isMeet = true;
                 ita(element);
+            } else {
+                iteOther(element);
             }
 
         });
     }
 
-    onMouseDown(e) {
+    @action onMouseDown(e) {
         console.log(e);
         if (elementClass(e.target).has('canvas-reader__p_el')) {
             // this.se = e.target.innerText;
@@ -239,13 +254,16 @@ export default class MBlock extends React.Component {
         }
     }
 
-    onMouseMove(e) {
+    @action onMouseMove(e) {
         if (this.isMouseDowning && elementClass(e.target).has('canvas-reader__p_el')) {
             _.map(this.elementsData, element => {
-                element.isActive = false;
-            });
-            this.iteElements(this.start.index, parseInt(e.target.getAttribute('custom-index')), (element) => {
-                element.isActive = true;
+                //     element.isActive = false;
+                // });
+                this.iteElements(this.start.index, parseInt(e.target.getAttribute('custom-index')), (element) => {
+                    element.isActive = true;
+                }, (el) => {
+                    el.isActive = false;
+                });
             });
             this.end = this.findElement(e.target);
             // if (this.end) {
@@ -254,7 +272,7 @@ export default class MBlock extends React.Component {
         }
     }
 
-    onMouseLeave() {
+    @action onMouseLeave() {
         clearTimeout(this.h);
         const closeUp = () => {
             this.endSelect();
@@ -273,7 +291,7 @@ export default class MBlock extends React.Component {
 
     h: any
 
-    onMouseUp(e) {
+    @action onMouseUp(e) {
 
         if (this.isMouseDowning) {
             // clearTimeout(this.h);
@@ -282,7 +300,7 @@ export default class MBlock extends React.Component {
 
             this.iteElements(this.start.index, this.end.index, (element) => {
                 element.isSelected++;
-            });
+            },()=>0);
             // this.start.isSelected = true;
             // this.end.isSelected = true;
             this.endSelect();

@@ -20,7 +20,7 @@ import {
 
 import {Button} from 'antd';
 // const logo = require('./logo.svg');
-import {observable, computed,autorun} from 'mobx';
+import {observable, computed, autorun,action} from 'mobx';
 
 import Fragment from './component/Fragment';
 import Book from './component/Book';
@@ -29,20 +29,30 @@ import _ from 'lodash';
 
 // import  {} from 'draft-js';
 class OrderLine {
-    constructor(){
+    constructor() {
 
         var n = this.arr[0]
 
-        autorun(()=>{
+        autorun(() => {
             // console.log(this.price);
             // console.log(this.arr[0].name);
-            console.log(n.name);
+            console.log('......');
+            console.log(n.name + n.sex);
 
         })
     }
+
     @observable price = 0;
     @observable amount = 1;
-    @observable arr:any =[{name: 'zhansan'}, {age: 24}];
+    @observable arr: any = [{name: 'zhansan', sex: 2}, {age: 24}];
+
+
+    @action change() {
+        this.arr[0].name = "lisi";
+        this.arr[0].sex = 5;
+
+
+    }
 
     @computed
     get total() {
@@ -53,9 +63,12 @@ class OrderLine {
 
 
 var a = new OrderLine();
+a.change();
 // a.price=24;
-var bbb= a.arr[0];
-bbb.name='fffcuk';
+// var bbb= a.arr[0];
+// bbb.name='lisi';
+// bbb.sex =3;
+
 
 var testHtml = `
     <div>
