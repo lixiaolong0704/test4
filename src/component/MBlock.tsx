@@ -30,9 +30,12 @@ function textNodesUnder(node) {
 export default class MBlock extends React.Component {
     props: {
         content: string,
-        reading?: any
+        reading?: any,
+        book_id:string,
+        paragraph_id:string //paragraph_id
     };
 
+    commits:any
 
     elementsData: elementData[];
     spans: any;
@@ -52,12 +55,14 @@ export default class MBlock extends React.Component {
     // }
 
     componentDidMount() {
-        var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
+       // var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
+
+
         // var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a  ng. For some applications, you can use JavaScript extensions like Flow or TypeScript to `;
 
         // var htmlObject = document.createElement('p');
         var htmlObject = this.p;
-        htmlObject.innerHTML = aaa;
+        htmlObject.innerHTML = this.props.content;
         // var sp= document.createElement('span');
         // sp.innerText='abc';
         // // htmlObject.firstChild.replaceWith(sp);
@@ -124,7 +129,7 @@ export default class MBlock extends React.Component {
         // span.innerText = data.text;
         span.className = className;
         span.style.backgroundColor = backgroundColor;
-        console.log(data.text + "attch");
+        // console.log(data.text + "attch");
     }
 
     textToElementData(myString: string): elementData[] {
@@ -188,6 +193,11 @@ export default class MBlock extends React.Component {
             }
 
         });
+
+        return {
+            start:startIndex,
+            end:endIndex
+        }
     }
 
     @action
@@ -195,9 +205,8 @@ export default class MBlock extends React.Component {
         console.log(e);
         if (elementClass(e.target).has('canvas-reader__p_el')) {
 
+            this.props.reading.deActive();
             this.end = this.start = this.findElement(e.target);
-
-
             if (this.start) {
                 this.start.isActive = true;
             }
@@ -231,6 +240,9 @@ export default class MBlock extends React.Component {
         const closeUp = () => {
             this.endSelect();
             this.isMouseDowning = false;
+            // _.map(this.elementsData, element => {
+            //     element.isActive = false;
+            // });
         }
         this.h = setTimeout(closeUp, 500);
     }
@@ -238,9 +250,7 @@ export default class MBlock extends React.Component {
     endSelect() {
         this.start = null;
         this.end = null;
-        _.map(this.elementsData, element => {
-            element.isActive = false;
-        });
+
     }
 
     h: any
@@ -254,12 +264,14 @@ export default class MBlock extends React.Component {
 
 
             var selection = '';
-            this.iteElements(this.start.index, this.end.index, (element) => {
+            var selectionElsData=[];
+            var index= this.iteElements(this.start.index, this.end.index, (element) => {
                 selection += element.text + " ";
-                element.isSelected++;
+                selectionElsData.push(element)
+                // element.isSelected++;
             }, () => 0);
             if (this.end)
-                this.props.reading.setCurrent(selection);
+                this.props.reading.setCurrent(selection,selectionElsData,index,this.props.book_id,this.props.paragraph_id);
             this.endSelect();
 
         }
