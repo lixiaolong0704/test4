@@ -16,15 +16,23 @@ export default class News extends React.Component {
     @observable se: any;
 
     render() {
-        var blocks=[];
+        var blocks = [];
         for (var i = 0; i < 1; i++) {
             blocks.push(<MBlock key={i} content={''}></MBlock>);
         }
 
         return (
-            <div      className='canvas-reader'>
-                {blocks}
-            </div>
+
+            <Row>
+                <Col span={12}>
+                    <div className='canvas-reader'>
+                        {blocks}
+                    </div>
+                </Col>
+                <Col span={12}>col-12</Col>
+            </Row>
+
+
         )
     }
 

@@ -278,7 +278,7 @@ export default class MBlock extends React.Component {
             this.endSelect();
             this.isMouseDowning = false;
         }
-        this.h = setTimeout(closeUp, 2000);
+        this.h = setTimeout(closeUp, 500);
     }
 
     endSelect() {

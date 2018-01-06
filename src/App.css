@@ -35,12 +35,21 @@
   .canvas-reader__p {
     background-color: antiquewhite; }
     .canvas-reader__p_el {
-      margin: 2px 2px;
+      margin: 2px 0px;
+      padding: 0px 2px;
       display: inline-block; }
       .canvas-reader__p_el:hover {
         cursor: pointer; }
       .canvas-reader__p_el_selected {
         background-color: aquamarine;
-        text-decoration: underline; }
+        position: relative; }
+        .canvas-reader__p_el_selected:before {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          border-bottom: 1px dashed red; }
       .canvas-reader__p_el_active {
         background-color: #5890ff; }
