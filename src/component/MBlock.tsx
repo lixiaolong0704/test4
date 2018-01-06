@@ -2,8 +2,8 @@ import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button
 import MoliEditor from './editor';
 import * as React from 'react';
 
-import {observable, computed, autorun,action} from 'mobx';
-import {observer,inject} from 'mobx-react';
+import {observable, computed, autorun, action} from 'mobx';
+import {observer, inject} from 'mobx-react';
 import elementClass from 'element-class';
 /// <reference path="./iBlock.ts" />
 import {elementData} from './iBlock';
@@ -30,7 +30,7 @@ function textNodesUnder(node) {
 export default class MBlock extends React.Component {
     props: {
         content: string,
-        reading?:any
+        reading?: any
     };
 
 
@@ -79,41 +79,12 @@ export default class MBlock extends React.Component {
                 span.innerText = data.text;
                 span.setAttribute("custom-index", index + "");
                 span.setAttribute("class", "canvas-reader__p_el");
-                // ReactDOM.render(<MElement ref={(span)=>{
-                //
-                //
-                //     // data.tag = span;
-                //     // data.tag = span;
-                //
-                //
-                //     // span.innerText = data.text;
-                //
-                //     console.log("ffff");
-                //
-                //
-                // }} isActive={data.isActive}
-                //                           isSelected={data.isSelected}
-                //                           key={data.key}
-                //                           index={data.index}>{data.text}</MElement>, document.createElement("span"));
 
-                // this.spans.push(span);
                 data.tag = span;
 
                 this.elementsData.push(observable(data));
 
                 index++;
-                // const dd =observable(data);
-                // console.log("aaaaa");
-
-                // autorun(()=>{
-                //     console.log("run ...");
-                //     // data = this.elementsData[index];
-                //     ReactDOM.render(<MElement isActive={dd.isActive}
-                //                               isSelected={dd.isSelected}
-                //                               key={dd.key}
-                //                               index={dd.index}>{dd.text}</MElement>, span);
-                //
-                // })
 
 
                 return span;
@@ -133,21 +104,6 @@ export default class MBlock extends React.Component {
             });
 
         });
-
-
-        // ReactDOM.render(aa,this.p);
-        // console.log(htmlObject);
-
-        // var aaa = `As your app grows `;
-        // var rpValue = `<span class="canvas-reader__el">$1</span>`;
-        // this.current= aaa.replace(/([a-zA-Z’-]+|[\,\.,:])/g, rpValue) ;
-        // ReactDOM.render(React.createElement("p",{},htmlObject), this.p);
-
-        // this.p.appendChild(htmlObject);
-        // this.p.appendChild(htmlObject);
-        // this.elementsData = elementsData;
-
-        // this.elementsData = this.textToElementData(aaa);
 
 
     }
@@ -234,12 +190,11 @@ export default class MBlock extends React.Component {
         });
     }
 
-    @action onMouseDown(e) {
+    @action
+    onMouseDown(e) {
         console.log(e);
         if (elementClass(e.target).has('canvas-reader__p_el')) {
-            // this.se = e.target.innerText;
-            // e.target.className.
-            // elementClass(e.target).add('canvas-reader__p_el_active')
+
             this.end = this.start = this.findElement(e.target);
 
 
@@ -251,7 +206,8 @@ export default class MBlock extends React.Component {
         }
     }
 
-    @action onMouseMove(e) {
+    @action
+    onMouseMove(e) {
         if (this.isMouseDowning && elementClass(e.target).has('canvas-reader__p_el')) {
             _.map(this.elementsData, element => {
                 //     element.isActive = false;
@@ -269,7 +225,8 @@ export default class MBlock extends React.Component {
         }
     }
 
-    @action onMouseLeave() {
+    @action
+    onMouseLeave() {
         clearTimeout(this.h);
         const closeUp = () => {
             this.endSelect();
@@ -288,48 +245,29 @@ export default class MBlock extends React.Component {
 
     h: any
 
-    @action onMouseUp(e) {
+    @action
+    onMouseUp(e) {
 
         if (this.isMouseDowning) {
             // clearTimeout(this.h);
             // const closeUp=()=>{
 
 
-            var selection='';
+            var selection = '';
             this.iteElements(this.start.index, this.end.index, (element) => {
-                selection+=element.text+" ";
+                selection += element.text + " ";
                 element.isSelected++;
-            },()=>0);
-            // this.start.isSelected = true;
-            // this.end.isSelected = true;
-            if(this.end)
+            }, () => 0);
+            if (this.end)
                 this.props.reading.setCurrent(selection);
             this.endSelect();
 
-
-
-            // }
-            //
-            // this.h=setTimeout(closeUp,500);
-
-            // this.forceUpdate();
         }
 
         this.isMouseDowning = false;
     }
 
     render() {
-        //
-        // dangerouslySetInnerHTML={{__html: this.current}}
-
-
-        // const elements = this.elementsData ? this.elementsData.map((el) => <MElement isActive={el.isActive}
-        //                                                                              isSelected={el.isSelected}
-        //                                                                              key={el.key}
-        //                                                                              index={el.index}>{el.text}</MElement>) : null;
-
-
-        console.log('run block render');
         return (
 
             <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}

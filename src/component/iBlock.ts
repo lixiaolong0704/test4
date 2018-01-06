@@ -4,6 +4,7 @@ export interface elementData {
     isActive: boolean
     isSelected: number
     index: number,
+    commits:Array<any>
     tag: any
 }
 
