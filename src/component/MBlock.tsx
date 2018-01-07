@@ -10,6 +10,7 @@ import {elementData} from './iBlock';
 
 var classNames = require('classnames');
 
+import axios from 'axios';
 
 const uuidv1 = require('uuid/v1');
 import _ from 'lodash';
@@ -31,11 +32,12 @@ export default class MBlock extends React.Component {
     props: {
         content: string,
         reading?: any,
-        book_id:string,
-        paragraph_id:string //paragraph_id
+        book_id: string,
+        paragraph_id: string //paragraph_id
+        default_remarks: any
     };
 
-    commits:any
+    @observable remarks: any = []
 
     elementsData: elementData[];
     spans: any;
@@ -54,13 +56,10 @@ export default class MBlock extends React.Component {
     //     return this.price * this.amount;
     // }
 
-    componentDidMount() {
-       // var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
-
-
+    convertHtml() {
+        // var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
         // var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a  ng. For some applications, you can use JavaScript extensions like Flow or TypeScript to `;
 
-        // var htmlObject = document.createElement('p');
         var htmlObject = this.p;
         htmlObject.innerHTML = this.props.content;
         // var sp= document.createElement('span');
@@ -95,7 +94,7 @@ export default class MBlock extends React.Component {
                 return span;
             });
             // textNode.replaceWith(tt);
-            console.log("ffff");
+            // console.log("ffff");
             textNode.replaceWith(...spans);
 
         });
@@ -110,6 +109,29 @@ export default class MBlock extends React.Component {
 
         });
 
+
+    }
+
+    @action
+    async componentDidMount() {
+
+        // this.loadRemarks();
+        this.convertHtml();
+        //after elementsData init
+        this.props.default_remarks ? this.props.default_remarks.map(r => {
+            if(r.start === r.end){
+                this.elementsData[r.start].isSelected++;
+            }else{
+                var c =r.start;
+                while(c <= r.end){
+                    this.elementsData[c].isSelected++;
+                    c++;
+                }
+            }
+            this.remarks.push(r);
+        }) : null;
+
+        // console.log("--"+(this.remarks?this.remarks.length:0));
 
     }
 
@@ -195,14 +217,14 @@ export default class MBlock extends React.Component {
         });
 
         return {
-            start:startIndex,
-            end:endIndex
+            start: startIndex,
+            end: endIndex
         }
     }
 
     @action
     onMouseDown(e) {
-        console.log(e);
+
         if (elementClass(e.target).has('canvas-reader__p_el')) {
 
             this.props.reading.deActive();
@@ -264,14 +286,14 @@ export default class MBlock extends React.Component {
 
 
             var selection = '';
-            var selectionElsData=[];
-            var index= this.iteElements(this.start.index, this.end.index, (element) => {
+            var selectionElsData = [];
+            var index = this.iteElements(this.start.index, this.end.index, (element) => {
                 selection += element.text + " ";
                 selectionElsData.push(element)
                 // element.isSelected++;
             }, () => 0);
             if (this.end)
-                this.props.reading.setCurrent(selection,selectionElsData,index,this.props.book_id,this.props.paragraph_id);
+                this.props.reading.setCurrent(selection, selectionElsData, index, this.props.book_id, this.props.paragraph_id);
             this.endSelect();
 
         }
@@ -280,6 +302,7 @@ export default class MBlock extends React.Component {
     }
 
     render() {
+        console.log(this.remarks ? this.remarks.length : 0);
         return (
 
             <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}

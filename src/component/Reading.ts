@@ -1,7 +1,9 @@
-import {observable, computed, autorun, action} from 'mobx';
+import {observable, computed, autorun, action, runInAction,useStrict} from 'mobx';
+import {asyncAction} from "mobx-utils";
 import _ from "lodash";
 import axios from 'axios';
 
+useStrict(true) // don't allow state modifications outside actions
 enum RemarkType {
     Word,
     Sentance,
@@ -18,7 +20,8 @@ interface iRemark {
     type?: RemarkType
 
     book_id?: string,
-    paragraph_id?: string
+    paragraph_id?: string,
+    relatedRemarks?: Array<any>
 
 }
 
@@ -53,8 +56,9 @@ export default class Reading {
     }
 
 
+
     @action
-    setCurrent(text: string, selectionElemementsData: any, index: { start: number, end: number }, book_id, paragraph_id) {
+    async setCurrent(text: string, selectionElemementsData: any, index: { start: number, end: number }, book_id, paragraph_id) {
         this.currentCommit.text = text
         this.currentCommit.remark = 'ffff';
         this.currentCommit.selectionElemementsData = selectionElemementsData;
@@ -63,6 +67,20 @@ export default class Reading {
         this.currentCommit.type = RemarkType.Word
         this.currentCommit.book_id = book_id;
         this.currentCommit.paragraph_id = paragraph_id;
+
+        let rst = await axios.post('http://localhost:4000/getRemarksByPosOfParagraph', {
+            book_id,
+            paragraph_id,
+            start: index.start,
+            end: index.end
+        });
+
+        runInAction(()=>{
+            this.currentCommit.relatedRemarks = rst.data.data;
+            console.log(this.currentCommit.relatedRemarks);
+        })
+
+
     }
 
 
@@ -70,7 +88,8 @@ export default class Reading {
         _id: '',
         text: '',
         remark: '',
-        type: RemarkType.Unknown
+        type: RemarkType.Unknown,
+        relatedRemarks:[]
 
     }
 

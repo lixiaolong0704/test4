@@ -1,11 +1,11 @@
-import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
+import {Form, List,Avatar, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import MoliEditor from './editor';
 import * as React from 'react';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
-import {observable, computed} from 'mobx';
+import {observable, computed,runInAction} from 'mobx';
 import {observer, Provider} from "mobx-react";
 import elementClass from 'element-class';
 import MBlock from './MBlock';
@@ -19,14 +19,45 @@ const reading = new Reading();
 export default class News extends React.Component {
 
 
-    @observable book: any ={}
+    @observable book: any = {}
+
+    @computed
+    get hasParagraphs() {
+        return (this.book && this.book.paragraphs);
+    }
+
 
     async componentDidMount() {
 
         let rst = await axios.get('http://localhost:4000/getBookById');
         if (rst.data.code === 1) {
+            // this.book = rst.data.data;
+            let book = rst.data.data;
+            if (book && book.paragraphs) {
 
-            this.book = rst.data.data;
+                let rst = await axios.post('http://localhost:4000/getRemarksByParagraphIds', {
+                    book_id: book._id,
+                    paragraph_ids: book.paragraphs.map(p => p._id).join(".")
+
+                });
+                if (rst.data.code === 1) {
+                    let group = rst.data.data;
+                    book.paragraphs.map(p => {
+                        var r = group[p._id];
+                        p.remarks = r ? r : null
+                    })
+
+                    runInAction(()=>{
+                        this.book = book;
+                    })
+
+
+                }
+
+
+            }
+
+
         }
 
     }
@@ -42,10 +73,11 @@ export default class News extends React.Component {
         //     blocks.push(<MBlock key={i} content={''}></MBlock>);
         //}
 
-        console.log(this.book);
+        // console.log(this.book);
 
-        var blocks = (this.book && this.book.paragraphs) ?
-            this.book.paragraphs.map((p) => <MBlock book_id={this.book._id} paragraph_id={p._id} key={p._id} content={p.en_content}></MBlock>) :
+        var blocks = (this.hasParagraphs) ?
+            this.book.paragraphs.map((p) => <MBlock default_remarks={p.remarks} book_id={this.book._id} paragraph_id={p._id} key={p._id}
+                                                    content={p.en_content}></MBlock>) :
             [];
 
 
@@ -67,6 +99,21 @@ export default class News extends React.Component {
                             value={reading.currentCommit.remark}></MoliEditor>
 
                         <Button type="primary" onClick={this.saveCommit.bind(this)} htmlType="submit">save</Button>
+
+
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={reading.currentCommit.relatedRemarks}
+                            renderItem={item => (
+                                <List.Item>
+                                    <List.Item.Meta
+                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        title={<a href="https://ant.design">{item.text}</a>}
+                                        description={item.remark}
+                                    />
+                                </List.Item>
+                            )}
+                        />
                     </Col>
                 </Row>
             </Provider>
