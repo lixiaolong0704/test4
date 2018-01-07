@@ -1,6 +1,6 @@
 import 'draft-js/dist/Draft.css';
 import './editor.css';
-import {Editor, EditorState, RichUtils,convertToRaw} from 'draft-js';
+import {Editor, EditorState, RichUtils, convertToRaw} from 'draft-js';
 import * as React from 'react';
 import {stateToHTML} from 'draft-js-export-html';
 import {stateFromHTML} from 'draft-js-import-html';
@@ -15,7 +15,7 @@ class MoliEditor extends React.Component<any, any> {
 
     props: {
         value?: any
-        onChange?:any
+        onChange?: any
     }
     state: {
         editorState: any;
@@ -26,17 +26,17 @@ class MoliEditor extends React.Component<any, any> {
         editor: any;
     }
 
-    componentWillReceiveProps(np :any) {
-        if (np.value ) {
-            if((this.state.html !== np.value)){
-                this.setState({
-                    editorState: EditorState.createWithContent(stateFromHTML(np.value)),
-                    html: np.value
-                })
-            }
-            // if(this.state.editorState !== )
+    componentWillReceiveProps(np: any) {
 
+        if ((this.state.html !== np.value)) {
+            this.setState({
+                editorState: EditorState.createWithContent(stateFromHTML(np.value)),
+                html: np.value
+            })
         }
+        // if(this.state.editorState !== )
+
+
     }
 
     constructor(props: any) {
@@ -57,12 +57,12 @@ class MoliEditor extends React.Component<any, any> {
         this.focus = () => this.refs.editor.focus();
         this.onChange = (editorState: any) => {
             if (this.state.editorState) {
-                const html =stateToHTML(editorState.getCurrentContent());
+                const html = stateToHTML(editorState.getCurrentContent());
                 // const html =convertToRaw(this.state.editorState.getCurrentContent());
                 this.setState({
                     editorState,
                     html
-                },()=>{
+                }, () => {
                     this.props.onChange && this.props.onChange(html);
                 });
                 // console.log(html);
@@ -150,8 +150,8 @@ class MoliEditor extends React.Component<any, any> {
                         spellCheck={true}
                     />
                 </div>
-                {this.state && this.state.editorState ?
-                    <div dangerouslySetInnerHTML={{__html: this.state.html}}></div> : ''}
+                {/*{this.state && this.state.editorState ?*/}
+                    {/*<div dangerouslySetInnerHTML={{__html: this.state.html}}></div> : ''}*/}
 
             </div>
         );

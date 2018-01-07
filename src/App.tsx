@@ -1,3 +1,4 @@
+///<reference path="component/antdext.d.ts"/>
 import * as React from 'react';
 import './App.css';
 import 'antd/dist/antd.css';
@@ -26,7 +27,7 @@ import Fragment from './component/Fragment';
 import Book from './component/Book';
 import News from './component/News';
 import _ from 'lodash';
-
+import Test from './Test.js';
 // import  {} from 'draft-js';
 class OrderLine {
     constructor() {
@@ -60,6 +61,11 @@ class OrderLine {
     }
 
 }
+
+
+var t = new Test();
+// t.p='zhansan';
+
 
 
 var a = new OrderLine();

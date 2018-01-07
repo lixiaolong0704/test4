@@ -1,15 +1,19 @@
-import {observable, computed, autorun, action, runInAction,useStrict} from 'mobx';
+import {observable, computed, autorun, action, runInAction, useStrict} from 'mobx';
 import {asyncAction} from "mobx-utils";
 import _ from "lodash";
 import axios from 'axios';
 
 useStrict(true) // don't allow state modifications outside actions
+
+export enum ViewMode{
+    view,
+    edit
+}
 enum RemarkType {
     Word,
     Sentance,
     Unknown
 }
-
 interface iRemark {
     _id: string,
     text: string,
@@ -31,6 +35,12 @@ export default class Reading {
     constructor() {
         // this.currentCommit={}
     }
+    @observable viewMode:ViewMode
+
+    @action
+    setViewMode(v:ViewMode){
+        this.viewMode =v;
+    }
 
 
     @action
@@ -45,28 +55,46 @@ export default class Reading {
     @action
     async saveCommit() {
         if (this.currentCommit) {
-            _.map(this.currentCommit.selectionElemementsData, (el) => {
-                el.isSelected++;
-            })
-            let rst = await axios.post('http://localhost:4000/addRemark', this.currentCommit);
 
-            return this.currentCommit;
+            //exec only add remark
+            if (!this.currentCommit._id) {
+                _.map(this.currentCommit.selectionElemementsData, (el) => {
+                    el.isSelected++;
+                })
+            }
+
+            let rst = await axios.post('http://localhost:4000/editRemark', this.currentCommit);
+            if (rst.data.code === 1) {
+
+                this.viewMode =ViewMode.view;
+                return this.currentCommit;
+            } else {
+                return null;
+            }
+
         }
 
     }
 
 
+    @action
+    setCurrentRemark(html) {
+        if (this.currentCommit)
+            this.currentCommit.remark = html;
+    }
+
 
     @action
-    async setCurrent(text: string, selectionElemementsData: any, index: { start: number, end: number }, book_id, paragraph_id) {
+    async setCurrent(text: string, selectionElemementsData: any, index: { start: number, end: number }, book_id, paragraph_id, remark) {
         this.currentCommit.text = text
-        this.currentCommit.remark = 'ffff';
+        this.currentCommit.remark = '';
         this.currentCommit.selectionElemementsData = selectionElemementsData;
         this.currentCommit.start = index.start;
         this.currentCommit.end = index.end;
         this.currentCommit.type = RemarkType.Word
         this.currentCommit.book_id = book_id;
         this.currentCommit.paragraph_id = paragraph_id;
+        this.currentCommit._id = '';
 
         let rst = await axios.post('http://localhost:4000/getRemarksByPosOfParagraph', {
             book_id,
@@ -75,9 +103,22 @@ export default class Reading {
             end: index.end
         });
 
-        runInAction(()=>{
-            this.currentCommit.relatedRemarks = rst.data.data;
-            console.log(this.currentCommit.relatedRemarks);
+        runInAction(() => {
+
+            var relatedRemarks = rst.data.data;
+            if (relatedRemarks && relatedRemarks.length > 0) {
+                var selectedRemark = _.find(relatedRemarks, (r) => r.start === this.currentCommit.start && r.end === this.currentCommit.end);
+                if (selectedRemark) {
+                    this.currentCommit.remark = selectedRemark.remark;
+                    this.currentCommit._id = selectedRemark._id;
+                }
+                this.currentCommit.relatedRemarks =  _.filter(relatedRemarks, (r) => !(r.start === this.currentCommit.start && r.end === this.currentCommit.end));
+            } else {
+                this.currentCommit.relatedRemarks = [];
+            }
+
+            this.viewMode = this.currentCommit._id?ViewMode.view:ViewMode.edit;
+            // console.log(this.currentCommit.relatedRemarks);
         })
 
 
@@ -89,7 +130,7 @@ export default class Reading {
         text: '',
         remark: '',
         type: RemarkType.Unknown,
-        relatedRemarks:[]
+        relatedRemarks: []
 
     }
 

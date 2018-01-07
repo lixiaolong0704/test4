@@ -1,17 +1,25 @@
-import {Form, List,Avatar, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
+import {Form, List, Avatar, Card, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import MoliEditor from './editor';
 import * as React from 'react';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
-import {observable, computed,runInAction} from 'mobx';
+import {observable, computed, runInAction} from 'mobx';
 import {observer, Provider} from "mobx-react";
 import elementClass from 'element-class';
 import MBlock from './MBlock';
 
 import Reading from './Reading';
+import {ViewMode} from "./Reading";
 import axios from 'axios';
+
+
+interface CardProps {
+    onClick?:any
+}
+
+
 
 const reading = new Reading();
 
@@ -20,6 +28,9 @@ export default class News extends React.Component {
 
 
     @observable book: any = {}
+
+
+
 
     @computed
     get hasParagraphs() {
@@ -47,7 +58,7 @@ export default class News extends React.Component {
                         p.remarks = r ? r : null
                     })
 
-                    runInAction(()=>{
+                    runInAction(() => {
                         this.book = book;
                     })
 
@@ -63,8 +74,12 @@ export default class News extends React.Component {
     }
 
 
-    saveCommit() {
-        reading.saveCommit();
+    async saveCommit() {
+        var result = await reading.saveCommit();
+        console.log(result);
+        if(result){
+
+        }
     }
 
     render() {
@@ -76,15 +91,22 @@ export default class News extends React.Component {
         // console.log(this.book);
 
         var blocks = (this.hasParagraphs) ?
-            this.book.paragraphs.map((p) => <MBlock default_remarks={p.remarks} book_id={this.book._id} paragraph_id={p._id} key={p._id}
+            this.book.paragraphs.map((p) => <MBlock default_remarks={p.remarks} book_id={this.book._id}
+                                                    paragraph_id={p._id} key={p._id}
                                                     content={p.en_content}></MBlock>) :
             [];
 
 
+        // var viewMode = reading.currentCommit._id?ViewMode.view
+        //todo 有空研究下 为啥不能直接写在元素里边 onClick={()=>reading.setViewMode(ViewMode.edit)}
+        var other={
+            onClick:()=>reading.setViewMode(ViewMode.edit)
+        }
+
         return (
 
             <Provider reading={reading}>
-                <Row>
+                <Row >
                     <Col span={12}>
                         <div>{this.book.cn_name}</div>
                         <div>{this.book.en_name}</div>
@@ -94,11 +116,20 @@ export default class News extends React.Component {
                     </Col>
                     <Col span={12}>
                         <div>{reading.currentCommit.text}</div>
+                        {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
+                        {
+                            reading.viewMode===ViewMode.view ?
+                                <Card {...other} style={{width: 300}}><p dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p></Card> :
+                                <div>
 
-                        <MoliEditor
-                            value={reading.currentCommit.remark}></MoliEditor>
+                                    <MoliEditor
+                                        value={reading.currentCommit.remark}
+                                        onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
 
-                        <Button type="primary" onClick={this.saveCommit.bind(this)} htmlType="submit">save</Button>
+                                    <Button type="primary" onClick={this.saveCommit.bind(this)}
+                                            htmlType="submit">save</Button>
+                                </div>
+                        }
 
 
                         <List
@@ -107,9 +138,10 @@ export default class News extends React.Component {
                             renderItem={item => (
                                 <List.Item>
                                     <List.Item.Meta
-                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        avatar={<Avatar
+                                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
                                         title={<a href="https://ant.design">{item.text}</a>}
-                                        description={item.remark}
+                                        description={<div dangerouslySetInnerHTML={{__html: item.remark}}></div>}
                                     />
                                 </List.Item>
                             )}
