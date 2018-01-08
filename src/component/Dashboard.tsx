@@ -51,7 +51,8 @@ export default class Dashboard extends React.Component {
 
     @observable checkLogin: boolean = false;
     props: {
-        auth?: any
+        auth?: any,
+        location:any
     };
 
     render() {

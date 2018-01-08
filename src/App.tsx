@@ -63,7 +63,8 @@ class App extends React.Component<any, any> {
     render() {
 
 
-        const ConnecttedDashboard =withRouter(Dashboard);
+        //todo  <Dashboard location={location}></Dashboard> <-- diff of --> const ConnecttedDashboard =withRouter(Dashboard);
+        //
 
         // const AuthC = observer(({match}) => {
         //     return this.auth.loggedIn ? <Dashboard/> : <Redirect to="/login"/>;
@@ -78,7 +79,7 @@ class App extends React.Component<any, any> {
                         <Switch>
                             <Route path="/login" component={Login}/>
                             <Route path="/404" component={() => <div>404 No Match</div>}/>
-                            <Route exact={false} path="/" component={()=><ConnecttedDashboard></ConnecttedDashboard>}/>
+                            <Route exact={false} path="/" component={({location})=><Dashboard location={location}></Dashboard>}/>
 
                         </Switch>
                     </Provider>

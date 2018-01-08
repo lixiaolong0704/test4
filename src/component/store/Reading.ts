@@ -66,7 +66,9 @@ export default class Reading {
             let rst = await api.post('/editRemark', this.currentCommit);
             if (rst.data.code === 1) {
 
-                this.viewMode =ViewMode.view;
+                runInAction(()=>{
+                    this.viewMode =ViewMode.view;
+                })
                 return this.currentCommit;
             } else {
                 return null;
