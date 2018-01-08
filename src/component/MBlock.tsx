@@ -5,40 +5,30 @@ import * as React from 'react';
 import {observable, computed, autorun, action} from 'mobx';
 import {observer, inject} from 'mobx-react';
 import elementClass from 'element-class';
-/// <reference path="./iBlock.ts" />
 import {elementData} from './iBlock';
+import {textNodesUnder} from '../utilities/dom';
 
 var classNames = require('classnames');
-
-import axios from 'axios';
-
 const uuidv1 = require('uuid/v1');
 import _ from 'lodash';
 
 var Color = require('color');
 
-function textNodesUnder(node) {
-    var all = [];
-    for (node = node.firstChild; node; node = node.nextSibling) {
-        if (node.nodeType == 3) all.push(node);
-        else all = all.concat(textNodesUnder(node));
-    }
-    return all;
+
+interface MBlockProps {
+    content: string,
+    reading?: any,
+    book_id: string,
+    paragraph_id: string //paragraph_id
+    default_remarks: any
 }
 
-@inject("reading")
+
+@inject('reading')
 @observer
 export default class MBlock extends React.Component {
-    props: {
-        content: string,
-        reading?: any,
-        book_id: string,
-        paragraph_id: string //paragraph_id
-        default_remarks: any
-    };
-
-    @observable remarks: any = []
-
+    props: MBlockProps;
+    @observable remarks: any = [];
     elementsData: elementData[];
     spans: any;
     @observable start: any;
@@ -51,11 +41,6 @@ export default class MBlock extends React.Component {
         this.isMouseDowning = false;
 
     }
-
-    // @computed get el() {
-    //     return this.price * this.amount;
-    // }
-
     convertHtml() {
         // var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
         // var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a  ng. For some applications, you can use JavaScript extensions like Flow or TypeScript to `;
@@ -79,10 +64,10 @@ export default class MBlock extends React.Component {
             var spans = _.map(_elementsDataOfTextNode, (data: elementData) => {
 
                 data.index = index;
-                var span = document.createElement("span");
+                var span = document.createElement('span');
                 span.innerText = data.text;
-                span.setAttribute("custom-index", index + "");
-                span.setAttribute("class", "canvas-reader__p_el");
+                span.setAttribute('custom-index', index + '');
+                span.setAttribute('class', 'canvas-reader__p_el');
 
                 data.tag = span;
 
@@ -119,11 +104,11 @@ export default class MBlock extends React.Component {
         this.convertHtml();
         //after elementsData init
         this.props.default_remarks ? this.props.default_remarks.map(r => {
-            if(r.start === r.end){
+            if (r.start === r.end) {
                 this.elementsData[r.start].isSelected++;
-            }else{
-                var c =r.start;
-                while(c <= r.end){
+            } else {
+                var c = r.start;
+                while (c <= r.end) {
                     this.elementsData[c].isSelected++;
                     c++;
                 }
@@ -219,7 +204,7 @@ export default class MBlock extends React.Component {
         return {
             start: startIndex,
             end: endIndex
-        }
+        };
     }
 
     @action
@@ -265,7 +250,7 @@ export default class MBlock extends React.Component {
             // _.map(this.elementsData, element => {
             //     element.isActive = false;
             // });
-        }
+        };
         this.h = setTimeout(closeUp, 500);
     }
 
@@ -275,7 +260,7 @@ export default class MBlock extends React.Component {
 
     }
 
-    h: any
+    h: any;
 
     @action
     onMouseUp(e) {
@@ -288,8 +273,8 @@ export default class MBlock extends React.Component {
             var selection = '';
             var selectionElsData = [];
             var index = this.iteElements(this.start.index, this.end.index, (element) => {
-                selection += element.text + " ";
-                selectionElsData.push(element)
+                selection += element.text + ' ';
+                selectionElsData.push(element);
                 // element.isSelected++;
             }, () => 0);
             if (this.end)

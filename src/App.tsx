@@ -20,11 +20,11 @@ import {
 } from 'react-router-dom';
 
 import Auth from './component/store/Auth';
-import {observer, Provider} from "mobx-react";
+import {observer, Provider} from 'mobx-react';
 
 import {Button} from 'antd';
 // const logo = require('./logo.svg');
-import {observable, computed, autorun, action} from 'mobx';
+import {observable, computed, autorun, action,runInAction} from 'mobx';
 
 
 import Login from './component/Login';
@@ -33,8 +33,7 @@ import _ from 'lodash';
 import Test from './Test.js';
 
 // import  {} from 'draft-js';
-
-
+require('./api');
 var auth = new Auth();
 
 @observer
@@ -45,43 +44,47 @@ class App extends React.Component<any, any> {
 
     }
 
-    @observable auth = auth
 
-    componentDidMount() {
+    @observable auth = auth;
+
+
+    async componentDidMount() {
+
+
+
+    }
+    @action
+    async componentWillMount(){
+
+
     }
 
 
     render() {
 
 
-        const AuthC = observer(({match}) => {
-            return this.auth.loggedIn ? <Dashboard/> : <Redirect to="/login"/>;
-        });
+        const ConnecttedDashboard =withRouter(Dashboard);
 
-        console.log("App");
-
-
+        // const AuthC = observer(({match}) => {
+        //     return this.auth.loggedIn ? <Dashboard/> : <Redirect to="/login"/>;
+        // });
+        console.log('App');
         //todo 确认一下exact作用！
         return (
             <div>
-
-
-                {/*{this.auth.loggedIn + ''}*/}
                 <Router>
-
                     <Provider auth={this.auth}>
 
                         <Switch>
                             <Route path="/login" component={Login}/>
                             <Route path="/404" component={() => <div>404 No Match</div>}/>
-                            <Route exact={false} path="/"
-                                   component={AuthC}/>
+                            <Route exact={false} path="/" component={()=><ConnecttedDashboard></ConnecttedDashboard>}/>
 
                         </Switch>
                     </Provider>
-
-
                 </Router>
+
+
             </div>
 
         );

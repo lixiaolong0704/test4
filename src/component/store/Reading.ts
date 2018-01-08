@@ -1,7 +1,7 @@
 import {observable, computed, autorun, action, runInAction, useStrict} from 'mobx';
 import {asyncAction} from "mobx-utils";
 import _ from "lodash";
-import axios from 'axios';
+import api from '../../api';
 
 useStrict(true) // don't allow state modifications outside actions
 
@@ -63,7 +63,7 @@ export default class Reading {
                 })
             }
 
-            let rst = await axios.post('http://localhost:4000/editRemark', this.currentCommit);
+            let rst = await api.post('/editRemark', this.currentCommit);
             if (rst.data.code === 1) {
 
                 this.viewMode =ViewMode.view;
@@ -96,7 +96,7 @@ export default class Reading {
         this.currentCommit.paragraph_id = paragraph_id;
         this.currentCommit._id = '';
 
-        let rst = await axios.post('http://localhost:4000/getRemarksByPosOfParagraph', {
+        let rst = await api.post('/getRemarksByPosOfParagraph', {
             book_id,
             paragraph_id,
             start: index.start,

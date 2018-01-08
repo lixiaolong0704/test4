@@ -2,10 +2,10 @@ import {List, Pagination} from 'antd';
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import {observable, computed, autorun, action, runInAction, useStrict} from 'mobx';
 import * as React from 'react';
-import axios from 'axios';
+
 import {observer, inject} from 'mobx-react';
 import Auth from './store/Auth';
-
+import api from  './../api';
 import {
 
     Redirect
@@ -39,14 +39,8 @@ export default class Login extends React.Component {
     @action
     async login() {
 
-        // this.t='lisi';
 
-        // this.props.auth.authenticate({
-        //     username: 'zhansan'
-        // })
-
-
-        let rst = await axios.post('http://localhost:4000/users/auth', {
+        let rst = await api.post('/users/auth', {
             username: 'lixiaolong',
             password: "001"
 

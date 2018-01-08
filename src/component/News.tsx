@@ -10,9 +10,9 @@ import {observer, Provider} from "mobx-react";
 import elementClass from 'element-class';
 import MBlock from './MBlock';
 
-import Reading from './Reading';
-import {ViewMode} from "./Reading";
-import axios from 'axios';
+import Reading from './store/Reading';
+import {ViewMode} from "./store/Reading";
+import api from '../api';
 
 
 interface CardProps {
@@ -40,13 +40,13 @@ export default class News extends React.Component {
 
     async componentDidMount() {
 
-        let rst = await axios.get('http://localhost:4000/getBookById');
+        let rst = await api.get('/getBookById');
         if (rst.data.code === 1) {
             // this.book = rst.data.data;
             let book = rst.data.data;
             if (book && book.paragraphs) {
 
-                let rst = await axios.post('http://localhost:4000/getRemarksByParagraphIds', {
+                let rst = await api.post('/getRemarksByParagraphIds', {
                     book_id: book._id,
                     paragraph_ids: book.paragraphs.map(p => p._id).join(".")
 

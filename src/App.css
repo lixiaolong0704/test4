@@ -5,8 +5,11 @@
   width: 70%; }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px; }
+  width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 24px 16px 0;
+  float: left; }
 
 .App-header {
   background-color: #222;
