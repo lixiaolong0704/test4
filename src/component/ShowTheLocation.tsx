@@ -33,7 +33,7 @@ export default class ShowTheLocation extends React.Component {
     }
 
     getActiveKey(location) {
-        var keys = ['fragment', 'book', 'news'];
+        var keys = ['fragment', 'book', 'news','admin_book'];
         var activeKey = null;
         keys.forEach((key) => {
             if (matchPath(location.pathname, {
@@ -76,6 +76,8 @@ export default class ShowTheLocation extends React.Component {
                     <Menu.Item key="fragment">{createNavLink('fragment')}</Menu.Item>
                     <Menu.Item key="book">{createNavLink('book')}</Menu.Item>
                     <Menu.Item key="news">{createNavLink('news')}</Menu.Item>
+
+                    <Menu.Item key="admin_book">{createNavLink('admin_book')}</Menu.Item>
                     <Menu.Item key="4">option4</Menu.Item>
                 </SubMenu>
 

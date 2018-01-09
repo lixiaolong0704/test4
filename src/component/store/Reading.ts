@@ -98,7 +98,7 @@ export default class Reading {
         this.currentCommit.paragraph_id = paragraph_id;
         this.currentCommit._id = '';
 
-        let rst = await api.post('/getRemarksByPosOfParagraph', {
+        let rst = await api.post('/remark/getRemarksByPosOfParagraph', {
             book_id,
             paragraph_id,
             start: index.start,

@@ -40,13 +40,13 @@ export default class News extends React.Component {
 
     async componentDidMount() {
 
-        let rst = await api.get('/getBookById');
+        let rst = await api.get('/book/getBookById');
         if (rst.data.code === 1) {
             // this.book = rst.data.data;
             let book = rst.data.data;
             if (book && book.paragraphs) {
 
-                let rst = await api.post('/getRemarksByParagraphIds', {
+                let rst = await api.post('/remark/getRemarksByParagraphIds', {
                     book_id: book._id,
                     paragraph_ids: book.paragraphs.map(p => p._id).join(".")
 

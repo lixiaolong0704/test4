@@ -20,6 +20,7 @@ import {
 import Fragment from './Fragment';
 import Book from './Book';
 import News from './News';
+import BookManage from './admin/BookManage';
 
 const {SubMenu} = Menu;
 const {Header, Content, Sider} = Layout;
@@ -114,6 +115,7 @@ export default class Dashboard extends React.Component {
                                 <Route path="/fragment" component={() => <div><Fragment></Fragment></div>}/>
                                 <Route path="/book" component={(mc) => <Book match={mc}></Book>}/>
                                 <Route path="/news" component={(mc: any) => (<News/>)}/>
+                                <Route path="/admin_book" component={(mc: any) => (<BookManage/>)}/>
                                 <Redirect to="/404"/>
                             </Switch>
 

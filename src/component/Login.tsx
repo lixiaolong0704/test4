@@ -40,7 +40,7 @@ export default class Login extends React.Component {
     async login() {
 
 
-        let rst = await api.post('/users/auth', {
+        let rst = await api.post('/user/auth', {
             username: 'lixiaolong',
             password: "001"
 

@@ -24,7 +24,7 @@ export default class Auth {
     async autoLogin() {
 
         if(!this.userInfo){
-            let rst = await api.get('/users/getUserInfo');
+            let rst = await api.get('/user/getUserInfo');
             runInAction(() => {
                 if(rst.data.code===1){
                     this.userInfo = rst.data.data;
@@ -50,7 +50,7 @@ export default class Auth {
     @action
     async signout() {
         var _t=this;
-        let rst = await api.get('/users/signout');
+        let rst = await api.get('/user/signout');
         if(rst.data.code===1){
             runInAction(() => {
                 _t.userInfo = null
