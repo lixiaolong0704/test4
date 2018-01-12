@@ -26,8 +26,8 @@ export default class Auth {
         if(!this.userInfo){
             let rst = await api.get('/user/getUserInfo');
             runInAction(() => {
-                if(rst.data.code===1){
-                    this.userInfo = rst.data.data;
+                if(rst.code===1){
+                    this.userInfo = rst.data;
                 }
             });
             return rst;
@@ -51,7 +51,7 @@ export default class Auth {
     async signout() {
         var _t=this;
         let rst = await api.get('/user/signout');
-        if(rst.data.code===1){
+        if(rst.code===1){
             runInAction(() => {
                 _t.userInfo = null
             });

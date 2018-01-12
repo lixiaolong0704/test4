@@ -63,8 +63,8 @@ export default class Reading {
                 })
             }
 
-            let rst = await api.post('/editRemark', this.currentCommit);
-            if (rst.data.code === 1) {
+            let rst = await api.post('/remark/editRemark', this.currentCommit);
+            if (rst.code === 1) {
 
                 runInAction(()=>{
                     this.viewMode =ViewMode.view;
@@ -107,7 +107,7 @@ export default class Reading {
 
         runInAction(() => {
 
-            var relatedRemarks = rst.data.data;
+            var relatedRemarks = rst.data;
             if (relatedRemarks && relatedRemarks.length > 0) {
                 var selectedRemark = _.find(relatedRemarks, (r) => r.start === this.currentCommit.start && r.end === this.currentCommit.end);
                 if (selectedRemark) {

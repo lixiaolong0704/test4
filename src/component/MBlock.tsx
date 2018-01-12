@@ -141,7 +141,7 @@ export default class MBlock extends React.Component {
 
     textToElementData(myString: string): elementData[] {
 
-        var myRegexp = /([a-zA-Z’-]+|[\,\.,:])/g;
+        var myRegexp = /([a-zA-Z0-9’-]+|[\,\.,:])/g;
         var results = [];
         var match = myRegexp.exec(myString);
         var index = 0;
@@ -287,7 +287,7 @@ export default class MBlock extends React.Component {
     }
 
     render() {
-        console.log(this.remarks ? this.remarks.length : 0);
+        // console.log(this.remarks ? this.remarks.length : 0);
         return (
 
             <p className="canvas-reader__p" onMouseDown={this.onMouseDown.bind(this)}

@@ -45,11 +45,10 @@ export default class Login extends React.Component {
             password: "001"
 
         });
-        if (rst.data.code === 1) {
-            if (rst.data.data) {
+        if (rst.code === 1) {
+            if (rst.data) {
                 runInAction(() => {
-                    this.props.auth.authenticate(rst.data.data)
-
+                    this.props.auth.authenticate(rst.data)
                     this.redirectToReferrer = true;
 
                 })

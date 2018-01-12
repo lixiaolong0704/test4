@@ -6,20 +6,24 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
 import {observable, computed, runInAction} from 'mobx';
-import {observer, Provider} from "mobx-react";
+import {observer, Provider} from 'mobx-react';
 import elementClass from 'element-class';
 import MBlock from './MBlock';
 
 import Reading from './store/Reading';
-import {ViewMode} from "./store/Reading";
+import {ViewMode} from './store/Reading';
 import api from '../api';
+import _ from 'lodash';
 
 
 interface CardProps {
-    onClick?:any
+    onClick?: any
 }
 
-
+enum ScrollDirection {
+    Up,
+    Down
+}
 
 const reading = new Reading();
 
@@ -27,9 +31,8 @@ const reading = new Reading();
 export default class News extends React.Component {
 
 
-    @observable book: any = {}
-
-
+    @observable book: any = {};
+    readerDiv: any;
 
 
     @computed
@@ -38,29 +41,135 @@ export default class News extends React.Component {
     }
 
 
+    async loadMoreParagrames(direction: ScrollDirection, batchNum) {
+        this.isLoading = true;
+        let rst = await api.get(`/book/getBookParagraphsByIndex/${batchNum}`);
+        this.isLoading = false;
+        if (rst.code === 1) {
+            var paragraphs = rst.data.paragraphs;
+
+            var s = (this.book.paragraphs.length / this.queryPs.batchElementSize);
+            var getCurrentBatchSize = this.book.paragraphs.length % this.queryPs.batchElementSize === 0 ? s : (s + 1);
+
+
+
+            runInAction(() => {
+                if (direction === ScrollDirection.Down) {
+
+                    if (getCurrentBatchSize === this.maxBatchSize) {
+                        this.book.paragraphs.splice(0, paragraphs.length);
+                        this.topBatchNum++;
+                    }
+                    // this.book.paragraphs=[];
+                    _.map(paragraphs, (p) => {
+                        this.book.paragraphs.push(p);
+                    });
+                    this.bottomBatchNum = batchNum;
+
+                } else {
+
+                    // var nb = this.book.paragraphs
+
+                    var firstP= this.readerDiv.querySelector(".canvas-reader__p");
+                    setTimeout(()=>{
+                        firstP.scrollIntoView();
+                    })
+
+
+                    this.book.paragraphs.splice(this.book.paragraphs.length - paragraphs.length, paragraphs.length);
+                    // this.book.paragraphs.unshift(...paragraphs);
+                    _.map(_.reverse(paragraphs), (p) => {
+                        this.book.paragraphs.unshift(p);
+                    });
+
+                    this.topBatchNum = batchNum;
+                    this.bottomBatchNum--;
+
+
+
+                }
+
+
+            });
+
+
+        }
+
+
+    }
+
+
+    queryPs: any = {
+        batchNum: 1,
+        batchElementSize: 10
+
+    };
+    @observable topBatchNum: number = 1;
+    @observable bottomBatchNum: number = 1;
+    bounceHeight: number = 100;
+    maxBatchSize: number = 2;
+    isLoading: boolean = false;
+
+
     async componentDidMount() {
 
-        let rst = await api.get('/book/getBookById');
-        if (rst.data.code === 1) {
+
+        let rst = await api.get(`/book/getBookMainInfoById/${this.queryPs.batchNum}`);
+        if (rst.code === 1) {
             // this.book = rst.data.data;
-            let book = rst.data.data;
-            if (book && book.paragraphs) {
+            let book = rst.data;
+            if (book) {
+
+                // runInAction(() => {
+                //     console.log(book);
+                //     this.book = book;
+                // });
 
                 let rst = await api.post('/remark/getRemarksByParagraphIds', {
                     book_id: book._id,
-                    paragraph_ids: book.paragraphs.map(p => p._id).join(".")
+                    paragraph_ids: book.paragraphs.map(p => p._id).join('.')
 
                 });
-                if (rst.data.code === 1) {
-                    let group = rst.data.data;
+                if (rst.code === 1) {
+                    let group = rst.data;
                     book.paragraphs.map(p => {
                         var r = group[p._id];
-                        p.remarks = r ? r : null
-                    })
+                        p.remarks = r ? r : null;
+                    });
 
                     runInAction(() => {
                         this.book = book;
-                    })
+                        setTimeout(() => {
+                            console.log(this.readerDiv.innerHeight);
+                            var _t = this;
+                            this.readerDiv.addEventListener('scroll', () => {
+
+                                // console.log(this.readerDiv.scrollHeight);
+                                if(_t.isLoading){
+                                    return;
+                                }
+
+                                var h = (_t.readerDiv.scrollHeight - _t.readerDiv.offsetHeight);
+                                //almost bottom load more
+                                if ((_t.readerDiv.scrollTop + _t.bounceHeight ) >= h) {
+
+                                    _t.loadMoreParagrames(ScrollDirection.Down, _t.bottomBatchNum + 1);
+
+                                }
+                                // almost top
+                                if (( _t.readerDiv.scrollTop <= _t.bounceHeight) && _t.topBatchNum > 1) {
+
+                                    _t.loadMoreParagrames(ScrollDirection.Up, _t.topBatchNum - 1);
+
+                                }
+
+
+                            });
+
+                        });
+
+
+                    });
 
 
                 }
@@ -77,9 +186,20 @@ export default class News extends React.Component {
     async saveCommit() {
         var result = await reading.saveCommit();
         console.log(result);
-        if(result){
+        if (result) {
 
         }
+    }
+
+    Next(){
+        this.readerDiv.scrollTop += this.readerDiv.clientHeight;
+    }
+    Pre(){
+        var n=  this.readerDiv.scrollTop - this.readerDiv.clientHeight;
+        // if(n>=0){
+            this.readerDiv.scrollTop =n;
+        // }
+
     }
 
     render() {
@@ -99,18 +219,20 @@ export default class News extends React.Component {
 
         // var viewMode = reading.currentCommit._id?ViewMode.view
         //todo 有空研究下 为啥不能直接写在元素里边 onClick={()=>reading.setViewMode(ViewMode.edit)}
-        var other={
-            onClick:()=>reading.setViewMode(ViewMode.edit)
-        }
+        var other = {
+            onClick: () => reading.setViewMode(ViewMode.edit)
+        };
 
         return (
 
             <Provider reading={reading}>
-                <Row >
+                <Row>
                     <Col span={12}>
+                        <div>{this.topBatchNum +'---' +this.bottomBatchNum} </div>
+                        <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button onClick={this.Next.bind(this)}>Next</Button>  </div>
                         <div>{this.book.cn_name}</div>
                         <div>{this.book.en_name}</div>
-                        <div className='canvas-reader'>
+                        <div ref={readerDiv => this.readerDiv = readerDiv} className='canvas-reader'>
                             {blocks}
                         </div>
                     </Col>
@@ -118,8 +240,9 @@ export default class News extends React.Component {
                         <div>{reading.currentCommit.text}</div>
                         {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
                         {
-                            reading.viewMode===ViewMode.view ?
-                                <Card {...other} style={{width: 300}}><p dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p></Card> :
+                            reading.viewMode === ViewMode.view ?
+                                <Card {...other} style={{width: 300}}><p
+                                    dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p></Card> :
                                 <div>
 
                                     <MoliEditor
@@ -152,7 +275,7 @@ export default class News extends React.Component {
 
 
 
-        )
+        );
     }
 
 

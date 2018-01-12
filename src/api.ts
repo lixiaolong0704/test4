@@ -56,9 +56,33 @@ instance.interceptors.response.use(function (response) {
     //     var cacheKey = cache.generateKey(config);
     //     cache.set(cacheKey, response.data.data);
     // }
-    return response;
+    return response.data;
 }, function (error) {
     return Promise.reject(error);
 });
 // instance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-export default instance;
+
+
+var wraper:any={};
+const methods = [ 'options', 'get', 'post' ]
+methods.forEach(method =>  {
+
+
+    wraper[method] = function () {
+
+        var args= arguments;
+        return new Promise((r)=>{
+
+            instance[method].apply(instance,args).then((rst)=>{
+                r(rst);
+            })
+
+
+        });
+
+    }
+
+
+});
+
+export default wraper;
