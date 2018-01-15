@@ -1,18 +1,13 @@
-import {Form, List, Avatar, Card, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
-import MoliEditor from './ui/editor';
+import {Form, List, Avatar, Card, Row, Col, Button, AutoComplete} from 'antd';
+const ButtonGroup = Button.Group;
+import MoliEditor from './../../ui/editor';
 import * as React from 'react';
-
-const FormItem = Form.Item;
-const Option = Select.Option;
-const AutoCompleteOption = AutoComplete.Option;
 import {observable, computed, runInAction} from 'mobx';
 import {observer, Provider} from 'mobx-react';
-import elementClass from 'element-class';
-import MBlock from './MBlock';
-
-import Reading from './store/Reading';
-import {ViewMode} from './store/Reading';
-import api from '../api';
+import MBlock from './../../MBlock';
+import Reading from '../../store/Reading';
+import {ViewMode} from '../../store/Reading';
+import api from '../../../api';
 import _ from 'lodash';
 
 
@@ -28,12 +23,20 @@ enum ScrollDirection {
 const reading = new Reading();
 
 @observer
-export default class News extends React.Component {
+export default class Read extends React.Component {
 
+
+    props:{
+        location:any
+    }
 
     @observable book: any = {};
     readerDiv: any;
 
+    @computed
+    get book_id(){
+        return this.props.location.match.params.book_id;
+    }
 
     @computed
     get hasParagraphs() {
@@ -42,16 +45,16 @@ export default class News extends React.Component {
 
 
     async loadMoreParagrames(direction: ScrollDirection, batchNum) {
+
+
         this.isLoading = true;
-        let rst = await api.get(`/book/getBookParagraphsByIndex/${batchNum}`);
+        let rst = await api.get(`/book/getBookParagraphsByIndex/${this.book_id}/${batchNum}`);
         this.isLoading = false;
         if (rst.code === 1) {
             var paragraphs = rst.data.paragraphs;
-
+            // await this.loadParagraphsRemarks(this.book_id,paragraphs);
             var s = (this.book.paragraphs.length / this.queryPs.batchElementSize);
             var getCurrentBatchSize = this.book.paragraphs.length % this.queryPs.batchElementSize === 0 ? s : (s + 1);
-
-
 
             runInAction(() => {
                 if (direction === ScrollDirection.Down) {
@@ -72,7 +75,7 @@ export default class News extends React.Component {
 
                     var firstP= this.readerDiv.querySelector(".canvas-reader__p");
                     setTimeout(()=>{
-                        firstP.scrollIntoView();
+                        // firstP.scrollIntoView();
                     })
 
 
@@ -111,36 +114,42 @@ export default class News extends React.Component {
     isLoading: boolean = false;
 
 
+
+    //load remarks of paragraphs  and bind to paragraphs
+    async loadParagraphsRemarks(book_id:string,paragraphs:Array<any>){
+
+
+        let rst = await api.post('/remark/getRemarksByParagraphIds', {
+            book_id: book_id,
+            paragraph_ids: paragraphs.map(p => p._id).join('.')
+
+        });
+        if (rst.code === 1) {
+            let group = rst.data;
+            paragraphs.map(p => {
+                var r = group[p._id];
+                p.remarks = r ? r : null;
+            });
+        }
+
+    }
+
+
     async componentDidMount() {
 
 
-        let rst = await api.get(`/book/getBookMainInfoById/${this.queryPs.batchNum}`);
+
+        let rst = await api.get(`/book/getBookMainInfoById/${this.props.location.match.params.book_id}/${this.queryPs.batchNum}`);
         if (rst.code === 1) {
             // this.book = rst.data.data;
-            let book = rst.data;
+            var book = rst.data;
             if (book) {
 
-                // runInAction(() => {
-                //     console.log(book);
-                //     this.book = book;
-                // });
-
-                let rst = await api.post('/remark/getRemarksByParagraphIds', {
-                    book_id: book._id,
-                    paragraph_ids: book.paragraphs.map(p => p._id).join('.')
-
-                });
-                if (rst.code === 1) {
-                    let group = rst.data;
-                    book.paragraphs.map(p => {
-                        var r = group[p._id];
-                        p.remarks = r ? r : null;
-                    });
-
-                    runInAction(() => {
+                await this.loadParagraphsRemarks(book._id,book.paragraphs);
+                runInAction(() => {
                         this.book = book;
                         setTimeout(() => {
-                            console.log(this.readerDiv.innerHeight);
+
                             var _t = this;
                             this.readerDiv.addEventListener('scroll', () => {
 
@@ -172,7 +181,6 @@ export default class News extends React.Component {
                     });
 
 
-                }
 
 
             }
@@ -226,51 +234,62 @@ export default class News extends React.Component {
         return (
 
             <Provider reading={reading}>
-                <Row>
-                    <Col span={12}>
-                        <div>{this.topBatchNum +'---' +this.bottomBatchNum} </div>
-                        <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button onClick={this.Next.bind(this)}>Next</Button>  </div>
-                        <div>{this.book.cn_name}</div>
-                        <div>{this.book.en_name}</div>
-                        <div ref={readerDiv => this.readerDiv = readerDiv} className='canvas-reader'>
-                            {blocks}
-                        </div>
-                    </Col>
-                    <Col span={12}>
-                        <div>{reading.currentCommit.text}</div>
-                        {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
-                        {
-                            reading.viewMode === ViewMode.view ?
-                                <Card {...other} style={{width: 300}}><p
-                                    dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p></Card> :
-                                <div>
+                <div>
+                    <Row>
+                        <Col>
+                            <ButtonGroup>
+                                <Button type="primary" icon="cloud" />
+                                <Button type="primary" icon="cloud-download" />
+                            </ButtonGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <div>{this.topBatchNum +'---' +this.bottomBatchNum} </div>
+                            <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button onClick={this.Next.bind(this)}>Next</Button>  </div>
+                            <div>{this.book.cn_name}</div>
+                            <div>{this.book.en_name}</div>
+                            <div ref={readerDiv => this.readerDiv = readerDiv} className='canvas-reader'>
+                                {blocks}
+                            </div>
+                        </Col>
+                        <Col span={12}>
+                            <div>{reading.currentCommit.text}</div>
+                            {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
+                            {
+                                reading.viewMode === ViewMode.view ?
+                                    <Card {...other} style={{width: 300}}><p
+                                        dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p></Card> :
+                                    <div>
 
-                                    <MoliEditor
-                                        value={reading.currentCommit.remark}
-                                        onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
+                                        <MoliEditor
+                                            value={reading.currentCommit.remark}
+                                            onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
 
-                                    <Button type="primary" onClick={this.saveCommit.bind(this)}
-                                            htmlType="submit">save</Button>
-                                </div>
-                        }
+                                        <Button type="primary" onClick={this.saveCommit.bind(this)}
+                                                htmlType="submit">save</Button>
+                                    </div>
+                            }
 
 
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={reading.currentCommit.relatedRemarks}
-                            renderItem={item => (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        avatar={<Avatar
-                                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                        title={<a href="https://ant.design">{item.text}</a>}
-                                        description={<div dangerouslySetInnerHTML={{__html: item.remark}}></div>}
-                                    />
-                                </List.Item>
-                            )}
-                        />
-                    </Col>
-                </Row>
+                            <List
+                                itemLayout="horizontal"
+                                dataSource={reading.currentCommit.relatedRemarks}
+                                renderItem={item => (
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={<Avatar
+                                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                            title={<a href="https://ant.design">{item.text}</a>}
+                                            description={<div dangerouslySetInnerHTML={{__html: item.remark}}></div>}
+                                        />
+                                    </List.Item>
+                                )}
+                            />
+                        </Col>
+                    </Row>
+                </div>
+
             </Provider>
 
 

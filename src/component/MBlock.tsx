@@ -1,6 +1,7 @@
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
-import MoliEditor from './editor';
+import MoliEditor from './ui/editor';
 import * as React from 'react';
+import './MBlock.css';
 
 import {observable, computed, autorun, action} from 'mobx';
 import {observer, inject} from 'mobx-react';
@@ -41,6 +42,7 @@ export default class MBlock extends React.Component {
         this.isMouseDowning = false;
 
     }
+
     convertHtml() {
         // var aaa = `As your app grows,<span style="font-weight: bold;font-size: 24px;"> you can catch</span> a lot of bugs with typechecking. For some applications, you can use JavaScript extensions like Flow or TypeScript to typecheck your whole application. But even if you don’t use those, React has some built-in typechecking abilities. To run typechecking on the props for a component, you can assign the special propTypes property:`;
         // var aaa = `As your app grows,<span style="font-weight: bold"> you can catch</span> a  ng. For some applications, you can use JavaScript extensions like Flow or TypeScript to `;
@@ -103,6 +105,7 @@ export default class MBlock extends React.Component {
         // this.loadRemarks();
         this.convertHtml();
         //after elementsData init
+        // this.remarks=[];
         this.props.default_remarks ? this.props.default_remarks.map(r => {
             if (r.start === r.end) {
                 this.elementsData[r.start].isSelected++;

@@ -4,9 +4,9 @@
   -ms-user-select: none;
   user-select: none;
   -o-user-select: none;
-  height: 500px;
-  //overflow: auto;
-  overflow: hidden;
+  height: 520px;
+  overflow: scroll;
+  //overflow: hidden;
 
   &__p {
     //display: flex;

@@ -1,0 +1,10 @@
+.bookList{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap:wrap;
+  &__card{
+    flex: 1;
+
+  }
+}

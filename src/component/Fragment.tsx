@@ -1,5 +1,5 @@
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
-import MoliEditor from './editor';
+import MoliEditor from './ui/editor';
 import FragmentsList from './FragmentsList';
 
 

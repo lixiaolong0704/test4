@@ -18,8 +18,12 @@ import {
     Redirect
 } from 'react-router-dom';
 import Fragment from './Fragment';
-import Book from './Book';
+import Book from './client/book/Book';
 import News from './News';
+import Read from './client/book/Read';
+
+// import Book from ''
+
 import BookManage from './admin/BookManage';
 
 const {SubMenu} = Menu;
@@ -75,6 +79,32 @@ export default class Dashboard extends React.Component {
 // terminology) to the router.
         const ShowTheLocationWithRouter = withRouter(ShowTheLocation);
 
+        // class BookManageSwitch extends React.Component{
+        //     props:{
+        //         location:any
+        //     }
+        //
+        //     render() {
+        //         // const { location } = this.props
+        //         // const isModal = !!(
+        //         //     location.state &&
+        //         //     location.state.modal &&
+        //         //     this.previousLocation !== location // not initial render
+        //         // )
+        //         return (
+        //             <div>
+        //                 <Switch location={isModal ? this.previousLocation : location}>
+        //                     <Route exact path='/' component={Home}/>
+        //                     <Route path='/gallery' component={Gallery}/>
+        //                     <Route path='/img/:id' component={ImageView}/>
+        //                 </Switch>
+        //                 {isModal ? <Route path='/img/:id' component={Modal} /> : null}
+        //             </div>
+        //         )
+        //     }
+        //
+        // }
+
 
         return (
             <Layout>
@@ -113,9 +143,11 @@ export default class Dashboard extends React.Component {
                             <Switch>
                                 <Route exact path="/" component={() => (<div>home</div>)}/>
                                 <Route path="/fragment" component={() => <div><Fragment></Fragment></div>}/>
-                                <Route path="/book" component={(mc) => <Book match={mc}></Book>}/>
+                                <Route path="/book" component={(mc) => <Book></Book>}/>
                                 <Route path="/news" component={(mc: any) => (<News/>)}/>
-                                <Route path="/admin_book" component={(mc: any) => (<BookManage/>)}/>
+                                <Route path="/admin_book/:page/:book_id" component={(location: any) => <Read location={location}/>}/>
+                                <Route path="/admin_book/:page?" component={loc=> <BookManage location={loc}/>}/>
+
                                 <Redirect to="/404"/>
                             </Switch>
 

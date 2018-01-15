@@ -1,72 +1,120 @@
-import {Table, Icon, Divider} from 'antd';
+import {Table, Spin, Button} from 'antd';
 import * as React from 'react';
 
-import {observable, computed, runInAction} from 'mobx';
+import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
-import elementClass from 'element-class';
 import api from '../../api';
+import {NavLink} from 'react-router-dom'
 
 @observer
 export default class BookManage extends React.Component {
 
+    props: {
+        location?: any,
+        histroy?: any
+    }
+    @observable data: any = {docs: []};
+    @observable isLoading: boolean = false;
+
+    // @observable page:number=1;
+
 
     async componentDidMount() {
+        const {page} = this.props.location.match.params;
+        // :page
+        this.loadData(page ? page : 1);
+    }
 
-        let rst = await api.get(`/book/getBooksOfPg/1`);
+    @action
+    async loadData(page, callback?) {
+        var _t = this;
+        let rst = await api.get(`/book/getBooksOfPg/${page}`);
+        if (rst.code === 1) {
+            runInAction(() => {
+                _t.data = rst.data;
+                // this.props.histroy.push(``);
+
+                callback && callback();
+
+            })
+
+
+        }
+    }
+
+
+    @action
+    async importBook() {
+        this.isLoading = true;
+        let rst = await api.post(`/book/addBook`);
+
+        if (rst.code === 1) {
+            runInAction(() => {
+                this.isLoading = false;
+            })
+            this.loadData(1);
+
+
+        }
 
     }
 
+
+    onChange(page) {
+        this.loadData(page, () => {
+            this.props.location.history.push(`/admin_book/${page}`);
+        });
+    }
+
     render() {
+        var {page} = this.props.location.match.params;
+        page= page ? parseInt(page) : 1;
 
         const columns = [{
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            render: text => <a href="#">{text}</a>,
+            title: '书名',
+            dataIndex: 'cn_name',
+            key: 'cn_name',
+            render: (text, record) => <NavLink to={`/admin_book/${page}/${record._id}`}>{text}</NavLink>,
         }, {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
-        }, {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-        }, {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <span>
-                  <a href="#">Action 一 {record.name}</a>
-                  <Divider type="vertical"/>
-                  <a href="#">Delete</a>
-                  <Divider type="vertical"/>
-                  <a href="#" className="ant-dropdown-link">
-                    More actions <Icon type="down"/>
-                  </a>
-                </span>
-            ),
+            title: '书名',
+            dataIndex: 'en_name',
+            key: 'en_name',
+        },
+        {
+            title: '时间',
+            dataIndex: 'create_time',
+            key: 'create_time',
         }];
 
+        var pageConfig = {
+            total: this.data.total,
+            defaultCurrent:page,
+            onChange: this.onChange.bind(this),
+            pageSize: 5
 
-        const data = [{
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        }, {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        }, {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        }];
+        }
+
+
+        {/*<NavLink to="/about">About</NavLink>*/
+        }
+
+        // console.log(this.data.docs);
+
+        var dataSource = this.data.docs.map(d => d);
 
         return (
-            <div><Table columns={columns} dataSource={data}/></div>
+            <div>
+                <div>
+                    <Button onClick={this.importBook.bind(this)} type="primary">导入书籍</Button>
+                </div>
+
+                <div>
+                    {this.isLoading ? <Spin/> : ''}
+                    <Table rowKey="_id" columns={columns} pagination={pageConfig} dataSource={dataSource} size="small"/>
+                </div>
+
+
+            </div>
         );
     }
 

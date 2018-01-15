@@ -4,8 +4,8 @@
   -ms-user-select: none;
   user-select: none;
   -o-user-select: none;
-  height: 500px;
-  overflow: hidden; }
+  height: 520px;
+  overflow: scroll; }
   .canvas-reader__p {
     background-color: antiquewhite; }
     .canvas-reader__p_el {
