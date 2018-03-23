@@ -4,7 +4,8 @@ import * as React from 'react';
 import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
 import api from '../../api';
-import {NavLink} from 'react-router-dom'
+import {NavLink} from 'react-router-dom';
+import BookEdit from './BookEdit';
 
 @observer
 export default class BookManage extends React.Component {
@@ -12,9 +13,11 @@ export default class BookManage extends React.Component {
     props: {
         location?: any,
         histroy?: any
-    }
+    };
     @observable data: any = {docs: []};
     @observable isLoading: boolean = false;
+    @observable isShowEdit: boolean = false;
+
 
     // @observable page:number=1;
 
@@ -36,7 +39,7 @@ export default class BookManage extends React.Component {
 
                 callback && callback();
 
-            })
+            });
 
 
         }
@@ -51,7 +54,7 @@ export default class BookManage extends React.Component {
         if (rst.code === 1) {
             runInAction(() => {
                 this.isLoading = false;
-            })
+            });
             this.loadData(1);
 
 
@@ -66,9 +69,19 @@ export default class BookManage extends React.Component {
         });
     }
 
+    @action
+    showEdit(e) {
+        this.isShowEdit = true;
+    }
+
+    @action
+    onCloseEdit() {
+        this.isShowEdit = false;
+    }
+
     render() {
         var {page} = this.props.location.match.params;
-        page= page ? parseInt(page) : 1;
+        page = page ? parseInt(page) : 1;
 
         const columns = [{
             title: '书名',
@@ -80,19 +93,19 @@ export default class BookManage extends React.Component {
             dataIndex: 'en_name',
             key: 'en_name',
         },
-        {
-            title: '时间',
-            dataIndex: 'create_time',
-            key: 'create_time',
-        }];
+            {
+                title: '时间',
+                dataIndex: 'create_time',
+                key: 'create_time',
+            }];
 
         var pageConfig = {
             total: this.data.total,
-            defaultCurrent:page,
+            defaultCurrent: page,
             onChange: this.onChange.bind(this),
             pageSize: 5
 
-        }
+        };
 
 
         {/*<NavLink to="/about">About</NavLink>*/
@@ -102,9 +115,14 @@ export default class BookManage extends React.Component {
 
         var dataSource = this.data.docs.map(d => d);
 
+        var props = {
+            onClose: this.onCloseEdit.bind(this)
+        };
         return (
             <div>
+                {this.isShowEdit ? <BookEdit {...props}></BookEdit> : ''}
                 <div>
+                    <Button onClick={this.showEdit.bind(this)} type="primary">新增</Button>
                     <Button onClick={this.importBook.bind(this)} type="primary">导入书籍</Button>
                 </div>
 

@@ -70,10 +70,10 @@ export default class News extends React.Component {
 
                     // var nb = this.book.paragraphs
 
-                    var firstP= this.readerDiv.querySelector(".canvas-reader__p");
-                    setTimeout(()=>{
-                        firstP.scrollIntoView();
-                    })
+                    // var firstP= this.readerDiv.querySelector(".canvas-reader__p");
+                    // setTimeout(()=>{
+                    //     firstP.scrollIntoView();
+                    // })
 
 
                     this.book.paragraphs.splice(this.book.paragraphs.length - paragraphs.length, paragraphs.length);
@@ -229,7 +229,10 @@ export default class News extends React.Component {
                 <Row>
                     <Col span={12}>
                         <div>{this.topBatchNum +'---' +this.bottomBatchNum} </div>
-                        <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button onClick={this.Next.bind(this)}>Next</Button>  </div>
+                        <div>
+                            <Button onClick={this.Pre.bind(this)}>Pre</Button>
+                            <Button onClick={this.Next.bind(this)}>Next</Button>
+                        </div>
                         <div>{this.book.cn_name}</div>
                         <div>{this.book.en_name}</div>
                         <div ref={readerDiv => this.readerDiv = readerDiv} className='canvas-reader'>
