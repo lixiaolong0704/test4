@@ -116,7 +116,8 @@ export default class BookManage extends React.Component {
         var dataSource = this.data.docs.map(d => d);
 
         var props = {
-            onClose: this.onCloseEdit.bind(this)
+            onClose: this.onCloseEdit.bind(this),
+            form:null
         };
         return (
             <div>

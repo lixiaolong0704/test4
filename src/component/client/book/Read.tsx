@@ -1,4 +1,5 @@
 import {Form, List, Avatar, Card, Row, Col, Button, AutoComplete} from 'antd';
+
 const ButtonGroup = Button.Group;
 import MoliEditor from './../../ui/editor';
 import * as React from 'react';
@@ -26,15 +27,15 @@ const reading = new Reading();
 export default class Read extends React.Component {
 
 
-    props:{
-        location:any
+    props: {
+        location: any
     }
 
     @observable book: any = {};
     readerDiv: any;
 
     @computed
-    get book_id(){
+    get book_id() {
         return this.props.location.match.params.book_id;
     }
 
@@ -49,16 +50,31 @@ export default class Read extends React.Component {
 
         this.isLoading = true;
         let rst = await api.get(`/book/getBookParagraphsByIndex/${this.book_id}/${batchNum}`);
-        this.isLoading = false;
+
         if (rst.code === 1) {
             var paragraphs = rst.data.paragraphs;
+
+            if(paragraphs.length===0){
+                this.isLoadOver=true;
+                this.isLoading = false;
+                return;
+            }
+
+
             // await this.loadParagraphsRemarks(this.book_id,paragraphs);
             var s = (this.book.paragraphs.length / this.queryPs.batchElementSize);
             var getCurrentBatchSize = this.book.paragraphs.length % this.queryPs.batchElementSize === 0 ? s : (s + 1);
 
+
+
+
             runInAction(() => {
                 if (direction === ScrollDirection.Down) {
+                    if(paragraphs.length % this.queryPs.batchElementSize !==0){
+                        this.isLoadOver=true;
+                    }
 
+                    //dom中可以加载的最大maxBatchSize
                     if (getCurrentBatchSize === this.maxBatchSize) {
                         this.book.paragraphs.splice(0, paragraphs.length);
                         this.topBatchNum++;
@@ -73,15 +89,21 @@ export default class Read extends React.Component {
 
                     // var nb = this.book.paragraphs
 
-                    var firstP= this.readerDiv.querySelector(".canvas-reader__p");
-                    setTimeout(()=>{
+                    var firstP = this.readerDiv.querySelector(".canvas-reader__p");
+
+                    var preScrollHeight = this.readerDiv.scrollHeight;
+
+                    setTimeout(() => {
                         // firstP.scrollIntoView();
+                        console.log((this.readerDiv.scrollHeight - preScrollHeight) + "..")
                     })
 
 
                     this.book.paragraphs.splice(this.book.paragraphs.length - paragraphs.length, paragraphs.length);
+                    this.isLoadOver=false;
                     // this.book.paragraphs.unshift(...paragraphs);
                     _.map(_.reverse(paragraphs), (p) => {
+                        //unshift : Add new items to the beginning of an array
                         this.book.paragraphs.unshift(p);
                     });
 
@@ -89,10 +111,9 @@ export default class Read extends React.Component {
                     this.bottomBatchNum--;
 
 
-
                 }
 
-
+                this.isLoading = false;
             });
 
 
@@ -112,11 +133,11 @@ export default class Read extends React.Component {
     bounceHeight: number = 100;
     maxBatchSize: number = 2;
     isLoading: boolean = false;
-
+    isLoadOver:boolean =false;
 
 
     //load remarks of paragraphs  and bind to paragraphs
-    async loadParagraphsRemarks(book_id:string,paragraphs:Array<any>){
+    async loadParagraphsRemarks(book_id: string, paragraphs: Array<any>) {
 
 
         let rst = await api.post('/remark/getRemarksByParagraphIds', {
@@ -138,49 +159,46 @@ export default class Read extends React.Component {
     async componentDidMount() {
 
 
-
         let rst = await api.get(`/book/getBookMainInfoById/${this.props.location.match.params.book_id}/${this.queryPs.batchNum}`);
         if (rst.code === 1) {
             // this.book = rst.data.data;
             var book = rst.data;
             if (book) {
 
-                await this.loadParagraphsRemarks(book._id,book.paragraphs);
+                await this.loadParagraphsRemarks(book._id, book.paragraphs);
                 runInAction(() => {
-                        this.book = book;
-                        setTimeout(() => {
+                    this.book = book;
+                    setTimeout(() => {
 
-                            var _t = this;
-                            this.readerDiv.addEventListener('scroll', () => {
+                        var _t = this;
+                        this.readerDiv.addEventListener('scroll', () => {
 
-                                // console.log(this.readerDiv.scrollHeight);
-                                if(_t.isLoading){
-                                    return;
-                                }
+                            // console.log(this.readerDiv.scrollHeight);
+                            if (_t.isLoading) {
+                                return;
+                            }
 
-                                var h = (_t.readerDiv.scrollHeight - _t.readerDiv.offsetHeight);
-                                //almost bottom load more
-                                if ((_t.readerDiv.scrollTop + _t.bounceHeight ) >= h) {
+                            var h = (_t.readerDiv.scrollHeight - _t.readerDiv.offsetHeight);
+                            //almost bottom load more
+                            if ((_t.readerDiv.scrollTop + _t.bounceHeight ) >= h && (!this.isLoadOver)) {
 
-                                    _t.loadMoreParagrames(ScrollDirection.Down, _t.bottomBatchNum + 1);
+                                _t.loadMoreParagrames(ScrollDirection.Down, _t.bottomBatchNum + 1);
 
-                                }
-                                // almost top
-                                if (( _t.readerDiv.scrollTop <= _t.bounceHeight) && _t.topBatchNum > 1) {
+                            }
+                            // almost top
+                            if (( _t.readerDiv.scrollTop <= _t.bounceHeight) && _t.topBatchNum > 1) {
 
-                                    _t.loadMoreParagrames(ScrollDirection.Up, _t.topBatchNum - 1);
+                                _t.loadMoreParagrames(ScrollDirection.Up, _t.topBatchNum - 1);
 
-                                }
+                            }
 
-
-                            });
 
                         });
-
 
                     });
 
 
+                });
 
 
             }
@@ -199,13 +217,14 @@ export default class Read extends React.Component {
         }
     }
 
-    Next(){
+    Next() {
         this.readerDiv.scrollTop += this.readerDiv.clientHeight;
     }
-    Pre(){
-        var n=  this.readerDiv.scrollTop - this.readerDiv.clientHeight;
+
+    Pre() {
+        var n = this.readerDiv.scrollTop - this.readerDiv.clientHeight;
         // if(n>=0){
-            this.readerDiv.scrollTop =n;
+        this.readerDiv.scrollTop = n;
         // }
 
     }
@@ -238,15 +257,16 @@ export default class Read extends React.Component {
                     <Row>
                         <Col>
                             <ButtonGroup>
-                                <Button type="primary" icon="cloud" />
-                                <Button type="primary" icon="cloud-download" />
+                                <Button type="primary" icon="cloud"/>
+                                <Button type="primary" icon="cloud-download"/>
                             </ButtonGroup>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
-                            <div>{this.topBatchNum +'---' +this.bottomBatchNum} </div>
-                            <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button onClick={this.Next.bind(this)}>Next</Button>  </div>
+                            <div>{this.topBatchNum + '---' + this.bottomBatchNum} </div>
+                            <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button
+                                onClick={this.Next.bind(this)}>Next</Button></div>
                             <div>{this.book.cn_name}</div>
                             <div>{this.book.en_name}</div>
                             <div ref={readerDiv => this.readerDiv = readerDiv} className='canvas-reader'>
