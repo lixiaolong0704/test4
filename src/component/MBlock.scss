@@ -6,7 +6,10 @@
   -o-user-select: none;
   height: 520px;
   overflow: scroll;
-  //overflow: hidden;
+
+  &--noscroll{
+    overflow: hidden;
+  }
 
   &__p {
     //display: flex;

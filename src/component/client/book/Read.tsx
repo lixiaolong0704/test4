@@ -1,15 +1,16 @@
-import {Form, List, Avatar, Card, Row, Col, Button, AutoComplete} from 'antd';
+import {Form, List, Spin, Avatar, Card, Row, Col, Button, AutoComplete} from 'antd';
 
 const ButtonGroup = Button.Group;
 import MoliEditor from './../../ui/editor';
 import * as React from 'react';
-import {observable, computed, runInAction} from 'mobx';
+import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
 import MBlock from './../../MBlock';
 import Reading from '../../store/Reading';
 import {ViewMode} from '../../store/Reading';
 import api from '../../../api';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 
 interface CardProps {
@@ -29,7 +30,7 @@ export default class Read extends React.Component {
 
     props: {
         location: any
-    }
+    };
 
     @observable book: any = {};
     readerDiv: any;
@@ -38,6 +39,14 @@ export default class Read extends React.Component {
     get book_id() {
         return this.props.location.match.params.book_id;
     }
+
+    @computed
+    get maxBatchs() {
+        var z = this.book.psize % this.queryPs.batchElementSize === 0;
+        var s = this.book.psize / this.queryPs.batchElementSize;
+        return z ? s : s + 1;
+    }
+
 
     @computed
     get hasParagraphs() {
@@ -53,25 +62,20 @@ export default class Read extends React.Component {
 
         if (rst.code === 1) {
             var paragraphs = rst.data.paragraphs;
-
-            if(paragraphs.length===0){
-                this.isLoadOver=true;
-                this.isLoading = false;
-                return;
-            }
-
-
-            // await this.loadParagraphsRemarks(this.book_id,paragraphs);
-            var s = (this.book.paragraphs.length / this.queryPs.batchElementSize);
-            var getCurrentBatchSize = this.book.paragraphs.length % this.queryPs.batchElementSize === 0 ? s : (s + 1);
-
-
-
-
             runInAction(() => {
+                if (paragraphs.length === 0) {
+                    this.isLoadOver = true;
+                    this.isLoading = false;
+                    return;
+                }
+                // await this.loadParagraphsRemarks(this.book_id,paragraphs);
+                var s = (this.book.paragraphs.length / this.queryPs.batchElementSize);
+                var getCurrentBatchSize = this.book.paragraphs.length % this.queryPs.batchElementSize === 0 ? s : (s + 1);
+
+
                 if (direction === ScrollDirection.Down) {
-                    if(paragraphs.length % this.queryPs.batchElementSize !==0){
-                        this.isLoadOver=true;
+                    if (paragraphs.length % this.queryPs.batchElementSize !== 0) {
+                        this.isLoadOver = true;
                     }
 
                     //dom中可以加载的最大maxBatchSize
@@ -89,18 +93,18 @@ export default class Read extends React.Component {
 
                     // var nb = this.book.paragraphs
 
-                    var firstP = this.readerDiv.querySelector(".canvas-reader__p");
+                    var firstP = this.readerDiv.querySelector('.canvas-reader__p');
 
                     var preScrollHeight = this.readerDiv.scrollHeight;
 
                     setTimeout(() => {
                         // firstP.scrollIntoView();
-                        console.log((this.readerDiv.scrollHeight - preScrollHeight) + "..")
-                    })
+                        console.log((this.readerDiv.scrollHeight - preScrollHeight) + '..');
+                    });
 
 
                     this.book.paragraphs.splice(this.book.paragraphs.length - paragraphs.length, paragraphs.length);
-                    this.isLoadOver=false;
+                    this.isLoadOver = false;
                     // this.book.paragraphs.unshift(...paragraphs);
                     _.map(_.reverse(paragraphs), (p) => {
                         //unshift : Add new items to the beginning of an array
@@ -123,17 +127,20 @@ export default class Read extends React.Component {
     }
 
 
+    @observable topBatchNum: number = 3;
+    @observable bottomBatchNum: number = this.topBatchNum;
+
     queryPs: any = {
-        batchNum: 1,
+        batchNum: this.topBatchNum,
+
+        //每次请求段落的个数
         batchElementSize: 10
 
     };
-    @observable topBatchNum: number = 1;
-    @observable bottomBatchNum: number = 1;
     bounceHeight: number = 100;
     maxBatchSize: number = 2;
-    isLoading: boolean = false;
-    isLoadOver:boolean =false;
+    @observable isLoading: boolean = false;
+    @observable isLoadOver: boolean = false;
 
 
     //load remarks of paragraphs  and bind to paragraphs
@@ -171,29 +178,32 @@ export default class Read extends React.Component {
                     setTimeout(() => {
 
                         var _t = this;
-                        this.readerDiv.addEventListener('scroll', () => {
+                        var lastScrollTop = 0;
+                        this.readerDiv.addEventListener('scroll', action((e) => {
 
-                            // console.log(this.readerDiv.scrollHeight);
+                            console.log(e);
+                            var st = _t.readerDiv.scrollTop;
                             if (_t.isLoading) {
                                 return;
                             }
 
                             var h = (_t.readerDiv.scrollHeight - _t.readerDiv.offsetHeight);
                             //almost bottom load more
-                            if ((_t.readerDiv.scrollTop + _t.bounceHeight ) >= h && (!this.isLoadOver)) {
+                            if ((st > lastScrollTop) && (_t.readerDiv.scrollTop + _t.bounceHeight ) >= h && (!this.isLoadOver)) {
 
                                 _t.loadMoreParagrames(ScrollDirection.Down, _t.bottomBatchNum + 1);
 
                             }
                             // almost top
-                            if (( _t.readerDiv.scrollTop <= _t.bounceHeight) && _t.topBatchNum > 1) {
+                            if ((st < lastScrollTop) && ( _t.readerDiv.scrollTop <= _t.bounceHeight) && _t.topBatchNum > 1) {
 
                                 _t.loadMoreParagrames(ScrollDirection.Up, _t.topBatchNum - 1);
 
                             }
+                            lastScrollTop = _t.readerDiv.scrollTop;
 
-
-                        });
+                        }));
+                        _t.readerDiv.scrollTop = 1900;
 
                     });
 
@@ -217,6 +227,34 @@ export default class Read extends React.Component {
         }
     }
 
+    saveReadingPosition(){
+        var pos= this.readerDiv.getBoundingClientRect();
+        console.log(pos.top);
+        var pps = this.readerDiv.querySelectorAll(".canvas-reader__p");
+
+        var f =null;
+        _.find(pps,p=>{
+
+            if((p.getBoundingClientRect().bottom> pos.top)){
+                f= p;
+                return true;
+            }
+        });
+        var ws =  f.querySelectorAll('.canvas-reader__p_el');
+
+        var posWord=null;
+        _.find(ws,w=>{
+
+            if((w.getBoundingClientRect().bottom> pos.top)){
+                posWord= w
+                return true;
+            }
+        })
+        //得到当前阅读视野的第一个单词
+        console.log(posWord.innerText);
+        posWord.scrollIntoView();
+
+    }
     Next() {
         this.readerDiv.scrollTop += this.readerDiv.clientHeight;
     }
@@ -250,6 +288,14 @@ export default class Read extends React.Component {
             onClick: () => reading.setViewMode(ViewMode.edit)
         };
 
+        const loadMoreContent = <div>
+            {this.isLoading ? <Spin/> : ''}
+        </div>;
+
+        const readDivClasses = classnames('canvas-reader', {
+            'canvas-reader--noscroll': this.isLoading
+        });
+
         return (
 
             <Provider reading={reading}>
@@ -259,18 +305,22 @@ export default class Read extends React.Component {
                             <ButtonGroup>
                                 <Button type="primary" icon="cloud"/>
                                 <Button type="primary" icon="cloud-download"/>
+
                             </ButtonGroup>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
-                            <div>{this.topBatchNum + '---' + this.bottomBatchNum} </div>
+                            <div>{this.isLoading + ''}</div>
+                            <div>{this.topBatchNum + '---' + this.bottomBatchNum + '[批次]' + this.maxBatchs} </div>
+                            <Button type="primary" onClick={this.saveReadingPosition.bind(this)} >保存阅读位置</Button>
                             <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button
                                 onClick={this.Next.bind(this)}>Next</Button></div>
                             <div>{this.book.cn_name}</div>
                             <div>{this.book.en_name}</div>
-                            <div ref={readerDiv => this.readerDiv = readerDiv} className='canvas-reader'>
+                            <div ref={readerDiv => this.readerDiv = readerDiv} className={readDivClasses}>
                                 {blocks}
+                                {loadMoreContent}
                             </div>
                         </Col>
                         <Col span={12}>

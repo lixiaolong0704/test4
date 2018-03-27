@@ -6,6 +6,8 @@
   -o-user-select: none;
   height: 520px;
   overflow: scroll; }
+  .canvas-reader--noscroll {
+    overflow: hidden; }
   .canvas-reader__p {
     background-color: antiquewhite; }
     .canvas-reader__p_el {
