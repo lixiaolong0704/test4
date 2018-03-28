@@ -72,7 +72,6 @@ class App extends React.Component<any, any> {
         console.log('App');
         //todo 确认一下exact作用！
         return (
-            <div>
                 <Router>
                     <Provider auth={this.auth}>
 
@@ -84,10 +83,6 @@ class App extends React.Component<any, any> {
                         </Switch>
                     </Provider>
                 </Router>
-
-
-            </div>
-
         );
     }
 }

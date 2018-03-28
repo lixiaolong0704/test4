@@ -1,7 +1,34 @@
-.bookList {
+.book {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  flex-wrap: wrap; }
-  .bookList__card {
-    flex: 1; }
+  flex-direction: column; }
+  .book-tabs {
+    display: flex;
+    flex-direction: row;
+    background-color: #e9e9e9;
+    height: 50px;
+    line-height: 50px;
+    align-items: center;
+    align-content: center;
+    justify-content: center; }
+    .book-tabs__tab {
+      margin: 0px 5px; }
+  .book-list {
+    overflow-y: auto;
+    display: block;
+    background-color: #5890ff; }
+    .book-list__item {
+      margin: 10px;
+      width: 150px;
+      text-align: center;
+      float: left; }
+      .book-list__item img {
+        margin: auto; }
+    .book-list__cname {
+      height: 30px;
+      line-height: 30px;
+      overflow-x: hidden; }
+    .book-list__nomore {
+      clear: both;
+      zoom: 1; }

@@ -1,19 +1,19 @@
-import {Form, Avatar, Card, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import './Book.css';
-const {Meta} = Card;
 import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
-import {BrowserRouter as Router, Route, Link, NavLink} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Link, NavLink} from 'react-router-dom';
 import * as React from 'react';
 import api from '../../../api';
-
+import {Scrollbars} from 'react-custom-scrollbars';
+import InfiniteScroll from 'react-infinite-scroller';
+// import InfiniteScroll from 'react-infinite-scroll-component';
 
 @observer
 export default class Book extends React.Component {
 
-    @observable data: any = {};
+    @observable items: any = [];
 
-    // @observable page:number=1;
+    @observable hasMoreItems = true; //'=不要写成:'
 
 
     async componentDidMount() {
@@ -22,50 +22,69 @@ export default class Book extends React.Component {
 
     @action
     async loadData(page) {
+        console.log('..........');
         let rst = await api.get(`/book/getBooksOfPg/${page}`);
         if (rst.code === 1) {
             runInAction(() => {
-                this.data = rst.data;
-            })
+                rst.data.docs.map((item) => {
+                    this.items.push(item);
+                });
 
+                if (rst.data.docs.length === rst.data.limit) {
+                    this.hasMoreItems = true;
+                } else {
+                    this.hasMoreItems = false;
+                }
 
+            });
 
         }
     }
 
+    renderBookCard(d) {
 
-    onChange(page) {
-        this.loadData(page);
+        return <div className='book-list__item' key={d._id}>
+            <img src={'https://i0.ebkimg.com/previews/095/095949/095949935/095949935-sml-1.jpg'}/>
+            <div className='book-list__cname'><NavLink to={''}>{d.cn_name}</NavLink></div>
+        </div>;
     }
 
     render() {
 
 
         return (
-            <div>
-                <div className="bookList">
-                    {
-                        this.data && this.data.docs ? this.data.docs.map(d => <Card
-                            key={d._id}
-                            style={{width: 300}}
-                            cover={<img alt="example"
-                                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>}
-                            actions={[<Icon type="setting"/>, <Icon type="edit"/>, <Icon type="ellipsis"/>]}
-                        >
-                            <Meta
-                                className="bookList__card"
-                                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                title={d.cn_name}
-                                description="This is the description"
-                            />
-                        </Card>):''
-                    }
+            <div className='book'>
+                <div className='book-tabs'>
+                    <div className='book-tabs__tab'>
+                        最新推荐
+                    </div>
+                </div>
+
+
+                <div className="book-list">
+                    <InfiniteScroll
+                        initialLoad={false}
+                        pageStart={1}
+                        loadMore={this.loadData.bind(this)}
+                        hasMore={this.hasMoreItems}
+                        useWindow={false}
+                        threshold={100}
+                    >
+
+                        {
+                            this.items && this.items.length > 0 ? this.items.map(d => this.renderBookCard(d)) :
+                                <div></div>
+                        }
+                        {(!this.hasMoreItems)?<div className='book-list__nomore' >没有数据啦</div>:''}
+
+                    </InfiniteScroll>
                 </div>
 
 
 
+
             </div>
-        )
+        );
     }
 
 

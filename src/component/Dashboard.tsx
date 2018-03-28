@@ -57,7 +57,7 @@ export default class Dashboard extends React.Component {
     @observable checkLogin: boolean = false;
     props: {
         auth?: any,
-        location:any
+        location: any
     };
 
     render() {
@@ -68,93 +68,49 @@ export default class Dashboard extends React.Component {
                 return <Redirect to="/login"/>;
             }
         }
-        // if (!this.props.auth.loggedIn) {
-        //     return <Redirect to="/login"/>;
-        // }
-
-        // A simple component that shows the pathname of the current location
 
 
-// Create a new component that is "connected" (to borrow redux
-// terminology) to the router.
         const ShowTheLocationWithRouter = withRouter(ShowTheLocation);
 
-        // class BookManageSwitch extends React.Component{
-        //     props:{
-        //         location:any
-        //     }
-        //
-        //     render() {
-        //         // const { location } = this.props
-        //         // const isModal = !!(
-        //         //     location.state &&
-        //         //     location.state.modal &&
-        //         //     this.previousLocation !== location // not initial render
-        //         // )
-        //         return (
-        //             <div>
-        //                 <Switch location={isModal ? this.previousLocation : location}>
-        //                     <Route exact path='/' component={Home}/>
-        //                     <Route path='/gallery' component={Gallery}/>
-        //                     <Route path='/img/:id' component={ImageView}/>
-        //                 </Switch>
-        //                 {isModal ? <Route path='/img/:id' component={Modal} /> : null}
-        //             </div>
-        //         )
-        //     }
-        //
-        // }
+        return (<div className='app'>
+
+                <header className="app-header">
+                    <span className="app-header__logo" style={{color: 'White'}}>
+
+                    </span>
+                    <span className="app-header__right">
+                        <a className='app-header__signout' onClick={e => this.props.auth.signout()}> {this.props.auth.userInfo.username} </a>
+                    </span>
+                </header>
 
 
-        return (
-            <Layout>
-                <Header className="App-header">
-                    <div className="App-logo" style={{color: 'White'}}>
-                        <div
-                            onClick={e => this.props.auth.signout()}> {this.checkLogin + ''} {this.props.auth.userInfo.username}</div>
+                <div className='app-main'>
+                    <div  className='app-main__side'>
+                        <ul className='app-menu'>
+                            <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/book">发现</NavLink></li>
+                            <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/fragment">碎片</NavLink></li>
+                            <li className='app-menu__item'>书架</li>
+                            <li className='app-menu__item'>复习</li>
+
+                            <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/admin_book">管理</NavLink></li>
+                        </ul>
                     </div>
+                    <div  className='app-main__content'>
+                        <Switch>
+                            <Route exact path="/" component={() => (<div>home</div>)}/>
+                            <Route path="/fragment" component={() => <div><Fragment></Fragment></div>}/>
+                            <Route path="/book" component={(mc) => <Book></Book>}/>
+                            <Route path="/news" component={(mc: any) => (<News/>)}/>
+                            <Route path="/admin_book/:page/:book_id"
+                                   component={(location: any) => <Read location={location}/>}/>
+                            <Route path="/admin_book/:page?" component={loc => <BookManage location={loc}/>}/>
 
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        defaultSelectedKeys={['2']}
-                        style={{lineHeight: '64px'}}
-                    >
-                        <Menu.Item key="1">nav 1</Menu.Item>
-                        <Menu.Item key="2">nav 2</Menu.Item>
-                        <Menu.Item key="3">nav 3</Menu.Item>
-                    </Menu>
-                </Header>
-                <Layout>
-                    <Sider width={200} style={{background: '#fff'}}>
+                            <Redirect to="/404"/>
+                        </Switch>
+                    </div>
+                </div>
 
-                        <ShowTheLocationWithRouter></ShowTheLocationWithRouter>
-
-
-                    </Sider>
-                    <Layout style={{padding: '0 24px 24px'}}>
-                        <Breadcrumb style={{margin: '16px 0'}}>
-                            <Breadcrumb.Item>Home</Breadcrumb.Item>
-                            <Breadcrumb.Item>List</Breadcrumb.Item>
-                            <Breadcrumb.Item>App</Breadcrumb.Item>
-                        </Breadcrumb>
-                        <Content style={{background: '#fff', padding: 24, margin: 0, minHeight: 280}}>
-
-                            <Switch>
-                                <Route exact path="/" component={() => (<div>home</div>)}/>
-                                <Route path="/fragment" component={() => <div><Fragment></Fragment></div>}/>
-                                <Route path="/book" component={(mc) => <Book></Book>}/>
-                                <Route path="/news" component={(mc: any) => (<News/>)}/>
-                                <Route path="/admin_book/:page/:book_id" component={(location: any) => <Read location={location}/>}/>
-                                <Route path="/admin_book/:page?" component={loc=> <BookManage location={loc}/>}/>
-
-                                <Redirect to="/404"/>
-                            </Switch>
-
-                        </Content>
-                    </Layout>
-                </Layout>
-            </Layout>
+            </div>
         );
     }
 
