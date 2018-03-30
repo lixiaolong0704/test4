@@ -87,7 +87,7 @@ export default class BookManage extends React.Component {
             title: '书名',
             dataIndex: 'cn_name',
             key: 'cn_name',
-            render: (text, record) => <NavLink to={`/admin_book/${page}/${record._id}`}>{text}</NavLink>,
+            render: (text, record) => <NavLink target="_blank" to={`/read/${record._id}`}>{text}</NavLink>,
         }, {
             title: '书名',
             dataIndex: 'en_name',

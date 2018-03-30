@@ -2,12 +2,12 @@
 .book {
   width:100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: block;
+  position: relative;
   &-tabs {
     display: flex;
     flex-direction: row;
-    background-color: $dismayColor2;
+    //background-color: $dismayColor2;
     height: 50px;
     line-height: 50px;
     align-items: center;
@@ -19,12 +19,23 @@
     }
   }
 
+  &-listcontainer{
+    position:absolute;
+    top:50px;
+    left:0;
+    right:0;
+    bottom:0;
+    overflow: hidden;
+
+  }
+
   &-list {
-    overflow-y: auto;
-    display: block;
-    //flex-direction: row;
-    //align-items: flex-start;
-    //flex-wrap: wrap;
+    margin:0px auto;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
 
     //height:400px;
     //overflow:auto;
@@ -34,7 +45,7 @@
       margin: 10px;
       width: 150px;
       text-align: center;
-      float:left;
+      //float:left;
       img {
         margin: auto;
       }
@@ -49,6 +60,10 @@
     &__nomore{
       clear:both;
       zoom: 1;
+      text-align: center;
+      height: 50px;
+      line-height: 50px;
+      width:100%;
     }
 
   }

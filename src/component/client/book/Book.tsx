@@ -6,7 +6,10 @@ import * as React from 'react';
 import api from '../../../api';
 import {Scrollbars} from 'react-custom-scrollbars';
 import InfiniteScroll from 'react-infinite-scroller';
+// import InfiniteScroll from '../../ui/InfiniteScroll.js'
 // import InfiniteScroll from 'react-infinite-scroll-component';
+import PerfectScrollbar from 'perfect-scrollbar';
+import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
 @observer
 export default class Book extends React.Component {
@@ -15,14 +18,23 @@ export default class Book extends React.Component {
 
     @observable hasMoreItems = true; //'=不要写成:'
 
-
+    @observable sbar:any = null;
+    ps:any = null;
     async componentDidMount() {
+
+        this.ps = new PerfectScrollbar(this.sbar, {
+            wheelSpeed: 2,
+            wheelPropagation: true,
+            minScrollbarLength: 20
+        });
+
         this.loadData(1);
     }
 
     @action
     async loadData(page) {
         console.log('..........');
+        var _t=this;
         let rst = await api.get(`/book/getBooksOfPg/${page}`);
         if (rst.code === 1) {
             runInAction(() => {
@@ -35,6 +47,11 @@ export default class Book extends React.Component {
                 } else {
                     this.hasMoreItems = false;
                 }
+
+                setTimeout(() => {
+                    _t.ps.update();
+
+                });
 
             });
 
@@ -61,7 +78,7 @@ export default class Book extends React.Component {
                 </div>
 
 
-                <div className="book-list">
+                <div className='book-listcontainer' ref={(sbar) => this.sbar = sbar}  >
                     <InfiniteScroll
                         initialLoad={false}
                         pageStart={1}
@@ -71,16 +88,16 @@ export default class Book extends React.Component {
                         threshold={100}
                     >
 
-                        {
-                            this.items && this.items.length > 0 ? this.items.map(d => this.renderBookCard(d)) :
-                                <div></div>
-                        }
-                        {(!this.hasMoreItems)?<div className='book-list__nomore' >没有数据啦</div>:''}
+                        <div className="book-list">
 
+                            {
+                                this.items && this.items.length > 0 ? this.items.map(d => this.renderBookCard(d)) :
+                                    <div></div>
+                            }
+                            {(!this.hasMoreItems) ? <div className='book-list__nomore'>别扯了，到底了</div> : ''}
+                        </div>
                     </InfiniteScroll>
                 </div>
-
-
 
 
             </div>

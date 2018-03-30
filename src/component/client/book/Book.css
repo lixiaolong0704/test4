@@ -1,12 +1,11 @@
 .book {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column; }
+  display: block;
+  position: relative; }
   .book-tabs {
     display: flex;
     flex-direction: row;
-    background-color: #e9e9e9;
     height: 50px;
     line-height: 50px;
     align-items: center;
@@ -14,15 +13,25 @@
     justify-content: center; }
     .book-tabs__tab {
       margin: 0px 5px; }
+  .book-listcontainer {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden; }
   .book-list {
-    overflow-y: auto;
-    display: block;
+    margin: 0px auto;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
     background-color: #5890ff; }
     .book-list__item {
       margin: 10px;
       width: 150px;
-      text-align: center;
-      float: left; }
+      text-align: center; }
       .book-list__item img {
         margin: auto; }
     .book-list__cname {
@@ -31,4 +40,8 @@
       overflow-x: hidden; }
     .book-list__nomore {
       clear: both;
-      zoom: 1; }
+      zoom: 1;
+      text-align: center;
+      height: 50px;
+      line-height: 50px;
+      width: 100%; }
