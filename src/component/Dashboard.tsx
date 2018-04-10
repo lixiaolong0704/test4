@@ -7,6 +7,9 @@ import {observer, inject} from 'mobx-react';
 import Auth from './store/Auth';
 import {Layout, Menu, Breadcrumb} from 'antd';
 import PropTypes from 'prop-types';
+
+import Icon1 from '-!svg-react-loader?name=Icon1!./svg/interface.svg';
+
 import {
     BrowserRouter as Router,
     Route,
@@ -90,7 +93,7 @@ export default class Dashboard extends React.Component {
                         <div className='app-main'>
                             <div  className='app-main__side'>
                                 <ul className='app-menu'>
-                                    <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/book"> <img src='./svg/002-interface.svg'/>  发现</NavLink></li>
+                                    <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/book">    <Icon1/>发现</NavLink></li>
                                     <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/fragment">碎片</NavLink></li>
                                     <li className='app-menu__item'>书架</li>
                                     <li className='app-menu__item'>复习</li>

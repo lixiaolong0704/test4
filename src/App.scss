@@ -4,6 +4,20 @@
 
 
 $sideWidth:180px;
+.icon{
+  &-find{
+
+    //outline: 2px dashed red;
+    background-size: cover;
+    background-image:  url("./component/svg/003-books-stack-of-three.svg");
+    background-color: red;
+    width:16px;
+    height: 16px;
+    display: inline-block;
+    color:gray;
+
+  }
+}
 .app {
   display: flex;
   flex-direction: column;

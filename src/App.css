@@ -51,6 +51,15 @@ a {
   a:hover, a:visited {
     color: inherit; }
 
+.icon-find {
+  background-size: cover;
+  background-image: url("./component/svg/003-books-stack-of-three.svg");
+  background-color: red;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  color: gray; }
+
 .app {
   display: flex;
   flex-direction: column;
