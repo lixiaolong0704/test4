@@ -1,9 +1,13 @@
-//  modifier m_ element __
 @import "vars.scss";
 
+svg{
+  width:16px;
+  height: 16px;
+
+}
 
 
-$sideWidth:180px;
+$sideWidth:270px;
 .icon{
   &-find{
 

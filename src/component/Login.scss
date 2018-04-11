@@ -1,0 +1,27 @@
+.login-form{
+
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color: #98c05b;
+  &__form{
+    width:300px;
+    margin:auto;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+  }
+  &__logo{
+    width:90%;
+    height: 50px;
+    background-size: 100% 100%;
+    background-image: url('./svg/logo.svg');
+    margin:auto;
+
+
+  }
+
+}

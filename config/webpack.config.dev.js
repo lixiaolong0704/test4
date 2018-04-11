@@ -20,6 +20,7 @@ const publicPath = '/';
 const publicUrl = '';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
+const AutoDllPlugin = require('autodll-webpack-plugin');
 
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
@@ -130,11 +131,11 @@ module.exports = {
                 enforce: 'pre',
                 include: paths.appSrc,
             },
-            {
-
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
-            },
+            // {
+            //
+            //     test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+            //     loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+            // },
 
 
             {
@@ -158,6 +159,41 @@ module.exports = {
                         test: /\.(ts|tsx)$/,
                         include: paths.appSrc,
                         loader: require.resolve('ts-loader'),
+                    },
+                    {
+                        test: /\.scss$/,
+                        use: [
+                            {
+                                loader: require.resolve('style-loader'),
+                            },
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                }
+                            },
+                            {
+                                loader: require.resolve('sass-loader'),
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    ident: 'postcss',
+                                    plugins: () => [
+                                        require('postcss-flexbugs-fixes'),
+                                        autoprefixer({
+                                            browsers: [
+                                                '>1%',
+                                                'last 4 versions',
+                                                'Firefox ESR',
+                                                'not ie < 9',
+                                            ],
+                                            flexbox: 'no-2009',
+                                        }),
+                                    ],
+                                },
+                            },
+                        ]
                     },
                     // "postcss" loader applies autoprefixer to our CSS.
                     // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -219,6 +255,30 @@ module.exports = {
         ],
     },
     plugins: [
+        new AutoDllPlugin({
+            inherit:true,
+            debug: true,
+            inject: true,
+            filename: '[name].dll.js',
+            path: './dll',
+            context: __dirname,
+            entry: {
+                vendor: [
+                    'react',
+                    'antd',
+                    'perfect-scrollbar',
+                    'mobx-react'
+
+
+                ]
+
+                // vuex:[
+                // 	// './src/v2/vuex/dashboard/index.js',
+                // 	'./src/v2/vuex/datasource/index.js'
+                // ]
+
+            }
+        }),
         // Makes some environment variables available in index.html.
         // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
         // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">

@@ -1,10 +1,9 @@
 ///<reference path="component/antdext.d.ts"/>
 import * as React from 'react';
-import './App.css';
+import './App.scss';
 import 'antd/dist/antd.css';
 import PropTypes from 'prop-types';
-import {Layout, Menu, Breadcrumb, Icon} from 'antd';
-
+import {Layout,Form, Menu, Breadcrumb, Icon} from 'antd';
 const {SubMenu} = Menu;
 const {Header, Content, Sider} = Layout;
 
@@ -28,6 +27,8 @@ import {observable, computed, autorun, action,runInAction} from 'mobx';
 
 
 import Login from './component/Login';
+
+
 import Dashboard from './component/Dashboard';
 import _ from 'lodash';
 import Test from './Test.js';
@@ -36,6 +37,8 @@ import Test from './Test.js';
 require('./api');
 var auth = new Auth();
 
+
+const WrappedNormalLoginForm = Form.create()(Login);
 @observer
 class App extends React.Component<any, any> {
 
@@ -76,7 +79,7 @@ class App extends React.Component<any, any> {
                     <Provider auth={this.auth}>
 
                         <Switch>
-                            <Route path="/login" component={Login}/>
+                            <Route path="/login" component={WrappedNormalLoginForm}/>
                             <Route path="/404" component={() => <div>404 No Match</div>}/>
                             <Route exact={false} path="/" component={({location})=><Dashboard location={location}></Dashboard>}/>
 
