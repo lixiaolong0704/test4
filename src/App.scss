@@ -13,7 +13,7 @@ $sideWidth:270px;
 
     //outline: 2px dashed red;
     background-size: cover;
-    background-image:  url("./component/svg/003-books-stack-of-three.svg");
+    background-image:  url("assets/svg/003-books-stack-of-three.svg");
     background-color: red;
     width:16px;
     height: 16px;
@@ -52,6 +52,10 @@ $sideWidth:270px;
       float: left;
       display: inline-block;
       border-bottom: 2px solid $happyColor;
+      svg{
+        width:90%;
+        height: 95%;
+      }
     }
     &__right {
       float: right;
@@ -84,18 +88,32 @@ $sideWidth:270px;
     list-style-type: none;
     padding: 10px 20px;
     text-align: left;
+    vertical-align: middle;
 
+    &__text,&__icon{
+      vertical-align: middle;
+      margin-right: 10px;
+      color:inherit;
+
+    }
     &__item{
       height: 50px;
       line-height: 50px;
       color:gray;
       a{
         text-decoration: none;
+        vertical-align: middle;
+        //color:inherit;
+        &:visited,&:hover{
+          //color:inherit;
+        }
       }
 
       &_selected{
         color:white;
-
+        &:visited,&:hover{
+          color:white;
+        }
       }
     }
 

@@ -26,6 +26,7 @@ const AutoDllPlugin = require('autodll-webpack-plugin');
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
 module.exports = {
+    // context: path.join(__dirname, '/src'),
     // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
     // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
     devtool: 'cheap-module-source-map',
@@ -70,6 +71,8 @@ module.exports = {
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
     resolve: {
+
+
         // This allows you to set a fallback for where Webpack should look for modules.
         // We placed these paths second because we want `node_modules` to "win"
         // if there are any conflicts. This matches Node resolution mechanism.
@@ -97,6 +100,8 @@ module.exports = {
         ],
         alias: {
 
+             uis: path.resolve(__dirname, '../src/ui/'),
+             assets: path.resolve(__dirname, '../src/assets/'),
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
             'react-native': 'react-native-web',

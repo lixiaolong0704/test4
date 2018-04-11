@@ -9,8 +9,8 @@ import InfiniteScroll from 'react-infinite-scroller';
 // import InfiniteScroll from '../../ui/InfiniteScroll.js'
 // import InfiniteScroll from 'react-infinite-scroll-component';
 import PerfectScrollbar from 'perfect-scrollbar';
-import 'perfect-scrollbar/css/perfect-scrollbar.css';
-
+// import 'perfect-scrollbar/css/perfect-scrollbar.css';
+import 'uis/perfect-scrollbar/perfect-scrollbar.css'
 @observer
 export default class Book extends React.Component {
 
@@ -20,26 +20,11 @@ export default class Book extends React.Component {
 
     @observable sbar:any = null;
     @observable b =null;
-    @observable txt :string ='';
     ps:any = null;
-    @action
-    setup(){
-        this.txt='     Since originally writing this post a number of reports have come out to indicate that for the most part, using Data URIs in CSS is actually a render blocking anti-pattern (basically it will make your page seem slower, not faster, particularly on mobile). Therefore unless you know exactly what you are doing with them and what you want to achieve, tread carefully. I’ve left the post here as it was in case any of it has tangentially useful information.\n' +
-            '                        '
 
-        setTimeout(()=>{
-            this.ps = new PerfectScrollbar(this.b, {
-                wheelPropagation: true,
-                suppressScrollX:true,
-                minScrollbarLength: 20
-            });
-        })
-
-    }
     async componentDidMount() {
 
 
-        setTimeout(this.setup.bind(this),1)
 
         this.loadData(1);
     }
@@ -96,22 +81,20 @@ export default class Book extends React.Component {
                 <div className='book-tabs'>
                     <div className='book-tabs__tab' ref={ s=> this.b =s} >
                         最新推荐
-                        <div>
-                            {this.txt}
-                       </div>
+
                     </div>
                 </div>
 
 
                 <div className='book-listcontainer' ref={(sbar) => this.sbar = sbar}  >
-                    {/*<InfiniteScroll*/}
-                        {/*initialLoad={false}*/}
-                        {/*pageStart={1}*/}
-                        {/*loadMore={this.loadData.bind(this)}*/}
-                        {/*hasMore={this.hasMoreItems}*/}
-                        {/*useWindow={false}*/}
-                        {/*threshold={100}*/}
-                    {/*>*/}
+                    <InfiniteScroll
+                        initialLoad={false}
+                        pageStart={1}
+                        loadMore={this.loadData.bind(this)}
+                        hasMore={this.hasMoreItems}
+                        useWindow={false}
+                        threshold={100}
+                    >
 
                         <div className="book-list">
 
@@ -121,7 +104,7 @@ export default class Book extends React.Component {
                             }
                             {(!this.hasMoreItems) ? <div className='book-list__nomore'>别扯了，到底了</div> : ''}
                         </div>
-                    {/*</InfiniteScroll>*/}
+                    </InfiniteScroll>
                 </div>
 
 

@@ -1,7 +1,7 @@
 import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
 import MoliEditor from './ui/editor';
 import * as React from 'react';
-import './MBlock.css';
+import './MBlock.scss';
 
 import {observable, computed, autorun, action} from 'mobx';
 import {observer, inject} from 'mobx-react';

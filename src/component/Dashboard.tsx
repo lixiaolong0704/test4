@@ -8,7 +8,12 @@ import Auth from './store/Auth';
 import {Layout, Menu, Breadcrumb} from 'antd';
 import PropTypes from 'prop-types';
 
-import Icon1 from '-!svg-react-loader?name=Icon1!./svg/interface.svg';
+import FindIcon from '-!svg-react-loader?name=Icon1!assets/svg/interface.svg';
+import MyBookIcon from '-!svg-react-loader?name=Icon1!assets/svg/003-books-stack-of-three.svg';
+import FragmentIcon from '-!svg-react-loader?name=Icon1!assets/svg/001-fragments.svg';
+
+import LogoIcon from  '-!svg-react-loader?name=Icon1!assets/svg/logo.svg';
+
 
 import {
     BrowserRouter as Router,
@@ -32,7 +37,7 @@ import BookManage from './admin/BookManage';
 const {SubMenu} = Menu;
 const {Header, Content, Sider} = Layout;
 import ShowTheLocation from './ShowTheLocation';
-import svg from './svg/interface.svg'
+import svg from '../assets/svg/interface.svg'
 
 @inject('auth')
 @observer
@@ -80,28 +85,60 @@ export default class Dashboard extends React.Component {
 
                 <header className="app-header">
                     <span className="app-header__logo" style={{color: 'White'}}>
-
+                        <LogoIcon></LogoIcon>
                     </span>
                     <span className="app-header__right">
-                        <a className='app-header__signout' onClick={e => this.props.auth.signout()}> {this.props.auth.userInfo.username} </a>
+                        <a className='app-header__signout'
+                           onClick={e => this.props.auth.signout()}> {this.props.auth.userInfo.username} </a>
                     </span>
                 </header>
                 <Switch>
-                    <Route  path="/read/:book_id"  component={(location: any) => <Read location={location}/>}/>
-                    <Route  component={() => (
+                    <Route path="/read/:book_id" component={(location: any) => <Read location={location}/>}/>
+                    <Route component={() => (
 
                         <div className='app-main'>
-                            <div  className='app-main__side'>
+                            <div className='app-main__side'>
                                 <ul className='app-menu'>
-                                    <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/book">    <Icon1/>发现</NavLink></li>
-                                    <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/fragment">碎片</NavLink></li>
-                                    <li className='app-menu__item'>书架</li>
-                                    <li className='app-menu__item'>复习</li>
+                                    <li className='app-menu__item'>
+                                        <NavLink activeClassName="app-menu__item_selected"
 
-                                    <li className='app-menu__item'><NavLink activeClassName="app-menu__item_selected" to="/admin_book">管理</NavLink></li>
+                                                 to="/book">
+                                            <FindIcon className='app-menu__icon'/>
+                                            <span className='app-menu__text'>发现</span>
+                                        </NavLink>
+                                    </li>
+                                    <li className='app-menu__item'>
+                                        <NavLink activeClassName="app-menu__item_selected"
+                                                 to="/fragment">
+                                            <FragmentIcon className='app-menu__icon'/>
+                                            <span className='app-menu__text'>碎片</span>
+                                        </NavLink>
+                                    </li>
+                                    <li className='app-menu__item'>
+                                        <NavLink activeClassName="app-menu__item_selected"
+                                                 to="/book1">
+                                            <FindIcon className='app-menu__icon'/>
+                                            <span className='app-menu__text'>书架</span>
+                                        </NavLink>
+                                    </li>
+                                    <li className='app-menu__item'>
+                                        <NavLink activeClassName="app-menu__item_selected"
+                                                 to="/book2">
+                                            <FindIcon className='app-menu__icon'/>
+                                            <span className='app-menu__text'>复习</span>
+                                        </NavLink>
+                                    </li>
+
+                                    <li className='app-menu__item'>
+                                        <NavLink activeClassName="app-menu__item_selected"
+                                                 to="/admin_book">
+                                            <MyBookIcon className='app-menu__icon'></MyBookIcon>
+                                            <span className='app-menu__text'>管理</span>
+                                        </NavLink>
+                                    </li>
                                 </ul>
                             </div>
-                            <div  className='app-main__content'>
+                            <div className='app-main__content'>
                                 <Switch>
                                     <Route exact path="/" component={() => (<div>home</div>)}/>
                                     <Route path="/fragment" component={() => <div><Fragment></Fragment></div>}/>
@@ -118,7 +155,6 @@ export default class Dashboard extends React.Component {
 
                     )}/>
                 </Switch>
-
 
 
             </div>
