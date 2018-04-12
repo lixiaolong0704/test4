@@ -1,11 +1,17 @@
-$happyColor:#AAC814;
-$sadColor:#333;
-$dismayColor:#f9f9f9;
-$dismayColor2:#e9e9e9;
-$whiteColor:white;
+$happyColor: #AAC814;
 
+$sadColor: #333;
+$sadColor2: #262626;
+$dismayColor: #f9f9f9;
+$dismayColor2: #e9e9e9;
+$whiteColor: white;
 
-@mixin autoStrech(){
+$textColor: #888;
+$titleColor: #444;
+
+$sideWidth: 200px;
+
+@mixin autoStrech() {
   flex-basis: 0%;
   flex-shrink: 1;
   flex-grow: 1;
@@ -32,15 +38,19 @@ table, caption, tbody, tfoot, thead, tr, th, td {
   vertical-align: baseline;
   background: transparent;
 }
+
 body {
   line-height: 1;
 }
+
 ol, ul {
   list-style: none;
 }
+
 blockquote, q {
   quotes: none;
 }
+
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
@@ -56,6 +66,7 @@ q:before, q:after {
 ins {
   text-decoration: none;
 }
+
 del {
   text-decoration: line-through;
 }
@@ -65,10 +76,49 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
-a{
 
+a {
+  color: inherit;
   text-decoration: none;
-  &:hover,&:visited{
-    color:inherit;
+  &:visited, &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                   supported by Chrome and Opera */
+}
+
+svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+
+}
+
+.row-layout {
+  display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  @include autoStrech();
+
+  &__side {
+    background-color: $sadColor;
+    width: $sideWidth;
+  }
+
+  &__content {
+    background-color: $dismayColor;
+    @include autoStrech();
+
   }
 }

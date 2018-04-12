@@ -8,6 +8,7 @@
     width:100%;
     height: 150px;
     background-image: url('../../../assets/banner-bg.png');
+    background: linear-gradient(to bottom right, #8CA20C, #D0E26A);
   }
   &-tabs {
     display: flex;
@@ -18,29 +19,21 @@
     align-items: center;
     align-content: center;
     justify-content: center;
-
-
+    border-bottom:1px solid $dismayColor;
     &__tab{
-      background-color: red;
+      //background-color: red;
       margin:0px 5px;
 
       height: 50px;
       overflow-y: hidden;
       position: relative;
+      color:$titleColor;
+      font-weight: bold;
+
 
     }
   }
 
-  &-listcontainer{
-    position:absolute;
-    top:200px;
-    left:10px;
-    right:10px;
-    bottom:0;
-    overflow: hidden;
-    //height: 300px;
-
-  }
 
   &-list {
     margin:0px auto;
@@ -52,13 +45,12 @@
 
     //height:400px;
     //overflow:auto;
-    background-color: #5890ff;
 
     &__item {
       margin: 5px;
       width: 150px;
       text-align: center;
-      height: 150px;
+      height: 180px;
       //float:left;
       img {
         margin: auto;
@@ -68,6 +60,8 @@
       height: 30px;
       line-height: 30px;
       overflow-x: hidden;
+      color:$textColor;
+
 
 
     }

@@ -1,0 +1,72 @@
+@import "../../../vars.scss";
+
+.app-header {
+  background-color: $whiteColor;
+  height: 50px;
+  line-height: 50px;
+  color: white;
+  vertical-align: middle;
+  padding: 0px 20px 0px 0px;
+
+  border-bottom: 1px solid $dismayColor;
+  margin-bottom: -1px;
+
+  &__logo {
+    width: $sideWidth;
+    height: 100%;
+    background: $sadColor;
+    margin: 0px 0px 0px 0;
+    float: left;
+    display: inline-block;
+    border-bottom: 2px solid $happyColor;
+    svg {
+      width: 168px;
+      height: 36px;
+    }
+  }
+
+  &__right {
+    float: right;
+    height: 100%;
+  }
+  &__username {
+    color: $textColor;
+    height: 50px;
+    line-height: 50px;
+    display: inline-block;
+    svg {
+      margin-left: 10px;
+      width: 11px;
+      height: 11px;
+      fill: $textColor;
+
+    }
+    padding-left: 20px;
+    border-left: 1px solid $dismayColor;
+  }
+  &__panel {
+    background-color: $sadColor;
+    color: $textColor;
+    padding: 10px;
+    border-radius: 4px;
+    width: 150px;
+    li {
+      height: 30px;
+      line-height: 30px;
+      svg {
+        margin-right: 10px;
+      }
+      &:hover {
+        color: $whiteColor;
+        svg {
+          fill: $whiteColor;
+        }
+      }
+    }
+  }
+
+  &__signout {
+
+  }
+
+}

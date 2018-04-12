@@ -1,43 +1,40 @@
 import {List, Pagination} from 'antd';
 
-
+import {observable, computed, runInAction, action} from 'mobx';
+import {observer, Provider} from 'mobx-react';
 import * as React from 'react';
-import axios from 'axios';
-
+import api from '../api';
+@observer
 export default class FragmentList extends React.Component {
 
+    @observable name: String;
+    @observable fragmentsList?: any;
+    @observable currentFragment?: any;
+    @observable total?: number;
+    @observable page?: number;
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            name: 'zhansan'
-        };
     }
 
     props: {
         onUpdateCurrentFragment: Function
-    }
-    state: {
-        name: String,
-        fragmentsList?: any
-        currentFragment?: any
-        total?:number,
-        page?:number
-    }
+    };
+
 
     setCurrent(item) {
-        this.setState({currentFragment: item});
+        this.currentFragment =item;
         this.props.onUpdateCurrentFragment(item);
     }
 
-    async loadData(page:number, pageSize?) {
-        let rst = await axios.get(`http://localhost:4000/getFragmentsOfPg/${page}`);
+    async loadData(page: number, pageSize?) {
+        let rst = await api.get(`http://localhost:4000/getFragmentsOfPg/${page}`);
         // console.log(rst);
         this.setState({
             page,
             fragmentsList: rst.data.data.docs,
-            total:parseInt(rst.data.data.total)
-        })
+            total: parseInt(rst.data.data.total)
+        });
         this.setCurrent({});
 
     }
@@ -52,22 +49,20 @@ export default class FragmentList extends React.Component {
 
         return (
             <div>
-                <List
-                    itemLayout="horizontal"
-                    dataSource={this.state.fragmentsList}
-                    renderItem={item => (
-                        <List.Item>
-                            <List.Item.Meta
-                                title={<span onClick={() => this.setCurrent(item)}>{item.name}</span>}
-                                description={item.ref_link}
-                            />
-                        </List.Item>
-                    )}
-                >
-                </List>
-                <Pagination onChange={this.loadData.bind(this)} current={this.state.page} pageSize={5} defaultCurrent={1} total={this.state.total}/>
+                <div>
+                    {this.fragmentsList?this.fragmentsList.map((item)=>{
+                        <div>
+                            <span onClick={() => this.setCurrent(item)}>{item.name}</span>
+                            <span>{item.ref_link}</span>
+                        </div>
+                    }):''}
+                </div>
+
+
+                <Pagination onChange={this.loadData.bind(this)} current={this.page} pageSize={5}
+                            defaultCurrent={1} total={this.total}/>
             </div>
-        )
+        );
     }
 
 

@@ -1,0 +1,13 @@
+.dropdown-apple{
+  //color:red;
+  position: relative;
+  &__button{
+    cursor: pointer;
+  }
+  &__panel{
+    position: absolute;
+    top:60px;
+    right:0px;
+    z-index: 100;
+  }
+}

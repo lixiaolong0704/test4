@@ -1,18 +1,15 @@
-import {List, Pagination} from 'antd';
-import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from 'antd';
+
 import {observable, computed, autorun, action, runInAction, useStrict} from 'mobx';
 import * as React from 'react';
 import axios from 'axios';
 import {observer, inject} from 'mobx-react';
-import Auth from './store/Auth';
-import {Layout, Menu, Breadcrumb} from 'antd';
-import PropTypes from 'prop-types';
 
-import FindIcon from '-!svg-react-loader?name=Icon1!assets/svg/interface.svg';
-import MyBookIcon from '-!svg-react-loader?name=Icon1!assets/svg/003-books-stack-of-three.svg';
-import FragmentIcon from '-!svg-react-loader?name=Icon1!assets/svg/001-fragments.svg';
 
-import LogoIcon from  '-!svg-react-loader?name=Icon1!assets/svg/logo.svg';
+import FindIcon from 'assets/svg/interface.svg';
+import MyBookIcon from 'assets/svg/003-books-stack-of-three.svg';
+import FragmentIcon from 'assets/svg/001-fragments.svg';
+
+import HomeIcon from 'assets/svg/icon-space.svg';
 
 
 import {
@@ -25,19 +22,28 @@ import {
     withRouter,
     Redirect
 } from 'react-router-dom';
+
+
+
 import Fragment from './Fragment';
 import Book from './client/book/Book';
 import News from './News';
 import Read from './client/book/Read';
+import MyBook from './client/book/MyBook';
+import Review from './client/book/Review';
+import Home from './client/share/Home';
+
+
+
+
 
 // import Book from ''
 
 import BookManage from './admin/BookManage';
 
-const {SubMenu} = Menu;
-const {Header, Content, Sider} = Layout;
+
 import ShowTheLocation from './ShowTheLocation';
-import svg from '../assets/svg/interface.svg'
+import Header from './client/share/Header';
 
 @inject('auth')
 @observer
@@ -83,22 +89,21 @@ export default class Dashboard extends React.Component {
 
         return (<div className='app'>
 
-                <header className="app-header">
-                    <span className="app-header__logo" style={{color: 'White'}}>
-                        <LogoIcon></LogoIcon>
-                    </span>
-                    <span className="app-header__right">
-                        <a className='app-header__signout'
-                           onClick={e => this.props.auth.signout()}> {this.props.auth.userInfo.username} </a>
-                    </span>
-                </header>
+                <Header/>
                 <Switch>
                     <Route path="/read/:book_id" component={(location: any) => <Read location={location}/>}/>
                     <Route component={() => (
 
-                        <div className='app-main'>
-                            <div className='app-main__side'>
+                        <div className='row-layout'>
+                            <div className='row-layout__side'>
                                 <ul className='app-menu'>
+                                    <li className='app-menu__item'>
+                                        <NavLink activeClassName="app-menu__item_selected"
+                                                 to="/home">
+                                            <HomeIcon className='app-menu__icon'/>
+                                            <span className='app-menu__text'>首页</span>
+                                        </NavLink>
+                                    </li>
                                     <li className='app-menu__item'>
                                         <NavLink activeClassName="app-menu__item_selected"
 
@@ -116,14 +121,14 @@ export default class Dashboard extends React.Component {
                                     </li>
                                     <li className='app-menu__item'>
                                         <NavLink activeClassName="app-menu__item_selected"
-                                                 to="/book1">
+                                                 to="/mybook">
                                             <FindIcon className='app-menu__icon'/>
                                             <span className='app-menu__text'>书架</span>
                                         </NavLink>
                                     </li>
                                     <li className='app-menu__item'>
                                         <NavLink activeClassName="app-menu__item_selected"
-                                                 to="/book2">
+                                                 to="/review">
                                             <FindIcon className='app-menu__icon'/>
                                             <span className='app-menu__text'>复习</span>
                                         </NavLink>
@@ -138,12 +143,16 @@ export default class Dashboard extends React.Component {
                                     </li>
                                 </ul>
                             </div>
-                            <div className='app-main__content'>
+                            <div className='row-layout__content'>
                                 <Switch>
-                                    <Route exact path="/" component={() => (<div>home</div>)}/>
+                                    <Route exact path="/" component={() => (<Home></Home>)}/>
+                                    <Route path="/home" component={() => (<Home></Home>)}/>
                                     <Route path="/fragment" component={() => <div><Fragment></Fragment></div>}/>
                                     <Route path="/book" component={(mc) => <Book></Book>}/>
                                     <Route path="/news" component={(mc: any) => (<News/>)}/>
+                                    <Route path="/mybook" component={(mc) => <MyBook></MyBook>}/>
+                                    <Route path="/review" component={(mc) => <Review></Review>}/>
+
                                     <Route path="/admin_book/:page/:book_id"
                                            component={(location: any) => <Read location={location}/>}/>
                                     <Route path="/admin_book/:page?" component={loc => <BookManage location={loc}/>}/>

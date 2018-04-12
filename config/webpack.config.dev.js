@@ -118,6 +118,9 @@ module.exports = {
     module: {
         strictExportPresence: true,
         rules: [
+
+
+
             // TODO: Disable require.ensure as it's not a standard language feature.
             // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
             // { parser: { requireEnsure: false } },
@@ -143,11 +146,63 @@ module.exports = {
             // },
 
 
+            //import FindIcon from '-!svg-react-loader?name=Icon1!assets/svg/interface.svg';
+            //       enforce: 'pre', will error Module build failed: Error: Non-whitespace before first tag
+            // {
+            //     test: /\.svg$/,
+            //
+            //     // use:[
+            //     //     {
+            //     //         loader: 'svgo-loader',
+            //     //         options: {
+            //     //             plugins: [
+            //     //                 {removeTitle: true},
+            //     //                 {convertColors: {shorthex: false}},
+            //     //                 {convertPathData: false}
+            //     //             ]
+            //     //         }
+            //     //     },
+            //     //     {
+            //     //         loader: require.resolve('svg-react-loader'),
+            //     //     }
+            //     // ],
+            //
+            //     loader:require.resolve('svg-react-loader'),
+            //     include: paths.appSrc,
+            // },
+
             {
                 // "oneOf" will traverse all following loaders until one will
                 // match the requirements. When no loader matches it will fall
                 // back to the "file" loader at the end of the loader list.
                 oneOf: [
+
+                    {
+                        test: /\.svg$/,
+
+                        // use:[
+                        //     {
+                        //         loader: 'svgo-loader',
+                        //         options: {
+                        //             plugins: [
+                        //                 {removeTitle: true},
+                        //                 {convertColors: {shorthex: false}},
+                        //                 {convertPathData: false}
+                        //             ]
+                        //         }
+                        //     },
+                        //     {
+                        //         loader: require.resolve('svg-react-loader'),
+                        //     }
+                        // ],
+
+                        loader:require.resolve('svg-react-loader'),
+                        options:{
+                            name:'Icon1' //must have
+                        },
+                        include: paths.appSrc,
+                    },
+
                     // "url" loader works like "file" loader except that it embeds assets
                     // smaller than specified limit in bytes as data URLs to avoid requests.
                     // A missing `test` is equivalent to a match.

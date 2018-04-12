@@ -1,4 +1,4 @@
-import './Book.scss';
+import './MyBook.scss';
 import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
 import {BrowserRouter as Router, Route, Link, NavLink} from 'react-router-dom';
@@ -6,19 +6,19 @@ import * as React from 'react';
 import api from '../../../api';
 import {Scrollbars} from 'react-custom-scrollbars';
 import InfiniteScroll from 'react-infinite-scroller';
-
-
-import PerfectScrollbar from '../../../ui/perfect-scrollbar/index';
-
+import PerfectScrollbar from 'perfect-scrollbar';
+// import 'perfect-scrollbar/css/perfect-scrollbar.css';
+import 'uis/perfect-scrollbar/perfect-scrollbar.css'
 @observer
-export default class Book extends React.Component {
+export default class MyBook extends React.Component {
 
     @observable items: any = [];
 
     @observable hasMoreItems = true; //'=不要写成:'
 
-    @observable b = null;
-    ps: any = null;
+    @observable sbar:any = null;
+    @observable b =null;
+    ps:any = null;
 
     async componentDidMount() {
         this.loadData(1);
@@ -27,7 +27,7 @@ export default class Book extends React.Component {
     @action
     async loadData(page) {
         console.log('..........');
-        var _t = this;
+        var _t=this;
         let rst = await api.get(`/book/getBooksOfPg/${page}`);
         if (rst.code === 1) {
             runInAction(() => {
@@ -40,7 +40,9 @@ export default class Book extends React.Component {
                 } else {
                     this.hasMoreItems = false;
                 }
-                this.ps.init();
+
+
+
             });
 
         }
@@ -58,38 +60,36 @@ export default class Book extends React.Component {
 
 
         return (
-            <PerfectScrollbar className='book' ref={ps=> this.ps= ps}>
-                <InfiniteScroll
-                    initialLoad={false}
-                    pageStart={1}
-                    loadMore={this.loadData.bind(this)}
-                    hasMore={this.hasMoreItems}
-                    useWindow={false}
-                    threshold={100}
-                >
-                    <div className='book-banner'>
+            <div className='book'>
 
-                    </div>
-                    <div className='book-tabs'>
-                        <div className='book-tabs__tab' ref={s => this.b = s}>
-                            最新推荐
+                <div className='book-banner'>
 
+                </div>
+
+
+                <div className='book-listcontainer' ref={(sbar) => this.sbar = sbar}  >
+                    <InfiniteScroll
+                        initialLoad={false}
+                        pageStart={1}
+                        loadMore={this.loadData.bind(this)}
+                        hasMore={this.hasMoreItems}
+                        useWindow={false}
+                        threshold={100}
+                    >
+
+                        <div className="book-list">
+
+                            {
+                                this.items && this.items.length > 0 ? this.items.map(d => this.renderBookCard(d)) :
+                                    <div></div>
+                            }
+                            {(!this.hasMoreItems) ? <div className='book-list__nomore'>别扯了，到底了</div> : ''}
                         </div>
-                    </div>
+                    </InfiniteScroll>
+                </div>
 
 
-                    <div className="book-list">
-
-                        {
-                            this.items && this.items.length > 0 ? this.items.map(d => this.renderBookCard(d)) :
-                                <div></div>
-                        }
-                        {(!this.hasMoreItems) ? <div className='book-list__nomore'>别扯了，到底了</div> : ''}
-                    </div>
-
-
-                </InfiniteScroll>
-            </PerfectScrollbar>
+            </div>
         );
     }
 

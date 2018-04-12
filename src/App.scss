@@ -1,27 +1,20 @@
 @import "vars.scss";
 
-svg{
-  width:16px;
-  height: 16px;
-
-}
-
-
-$sideWidth:270px;
-.icon{
-  &-find{
+.icon {
+  &-find {
 
     //outline: 2px dashed red;
     background-size: cover;
-    background-image:  url("assets/svg/003-books-stack-of-three.svg");
+    background-image: url("assets/svg/003-books-stack-of-three.svg");
     background-color: red;
-    width:16px;
+    width: 16px;
     height: 16px;
     display: inline-block;
-    color:gray;
+    color: gray;
 
   }
 }
+
 .app {
   display: flex;
   flex-direction: column;
@@ -32,40 +25,6 @@ $sideWidth:270px;
   right: 0;
   top: 0;
   bottom: 0;
-
-
-
-
-  &-header {
-    background-color: $whiteColor;
-    height: 50px;
-    line-height: 50px;
-    color: white;
-    vertical-align: middle;
-    padding: 0px 20px 0px 0px;
-
-    &__logo {
-      width: $sideWidth;
-      height: 100%;
-      background: $sadColor;
-      margin: 0px 0px 0px 0;
-      float: left;
-      display: inline-block;
-      border-bottom: 2px solid $happyColor;
-      svg{
-        width:90%;
-        height: 95%;
-      }
-    }
-    &__right {
-      float: right;
-      height: 100%;
-    }
-    &__signout {
-
-    }
-
-  }
   &-main {
     display: flex;
     flex-direction: row;
@@ -90,29 +49,40 @@ $sideWidth:270px;
     text-align: left;
     vertical-align: middle;
 
-    &__text,&__icon{
+    &__text, &__icon {
       vertical-align: middle;
       margin-right: 10px;
-      color:inherit;
+      color: inherit;
 
     }
-    &__item{
+    &__item {
       height: 50px;
       line-height: 50px;
-      color:gray;
-      a{
+      color: $textColor;
+      svg {
+        fill: $textColor;
+      }
+      a {
         text-decoration: none;
         vertical-align: middle;
         //color:inherit;
-        &:visited,&:hover{
+        &:visited, &:hover {
           //color:inherit;
         }
       }
-
-      &_selected{
-        color:white;
-        &:visited,&:hover{
-          color:white;
+      &:hover {
+        color: $whiteColor;
+        svg {
+          fill: $whiteColor;
+        }
+      }
+      &_selected {
+        color: $happyColor;
+        &:visited, &:hover {
+          color: $happyColor;
+        }
+        svg {
+          fill: $happyColor;
         }
       }
     }

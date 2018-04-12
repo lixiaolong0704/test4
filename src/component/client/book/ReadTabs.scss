@@ -1,0 +1,19 @@
+@import "../../../vars";
+.read-tabs{
+  display: flex;
+  flex-direction: row;
+  width:100%;
+
+  align-content: center;
+  justify-content: space-between;
+  background-color: $sadColor2;
+  &__tab{
+
+    margin:10px 20px;
+    cursor: pointer;
+    svg{
+      width:18px;
+      height: 18px;
+    }
+  }
+}

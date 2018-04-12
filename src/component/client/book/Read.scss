@@ -1,0 +1,17 @@
+@import "../../../vars.scss";
+.read{
+  &__chapters{
+    li{
+      //height: 30px;
+      //line-height: 30px;
+      padding: 10px;
+    }
+  }
+  &__title{
+    height: 50px;
+    line-height: 50px;
+    margin:auto;
+    text-align: center;
+    color:$titleColor
+  }
+}
