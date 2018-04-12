@@ -5,15 +5,17 @@ import api from '../../api';
 
 useStrict(true) // don't allow state modifications outside actions
 
-export enum ViewMode{
+export enum ViewMode {
     view,
     edit
 }
+
 enum RemarkType {
     Word,
     Sentance,
     Unknown
 }
+
 interface iRemark {
     _id: string,
     text: string,
@@ -35,11 +37,12 @@ export default class Reading {
     constructor() {
         // this.currentCommit={}
     }
-    @observable viewMode:ViewMode
+
+    @observable viewMode: ViewMode
 
     @action
-    setViewMode(v:ViewMode){
-        this.viewMode =v;
+    setViewMode(v: ViewMode) {
+        this.viewMode = v;
     }
 
 
@@ -66,8 +69,8 @@ export default class Reading {
             let rst = await api.post('/remark/editRemark', this.currentCommit);
             if (rst.code === 1) {
 
-                runInAction(()=>{
-                    this.viewMode =ViewMode.view;
+                runInAction(() => {
+                    this.viewMode = ViewMode.view;
                 })
                 return this.currentCommit;
             } else {
@@ -87,17 +90,22 @@ export default class Reading {
 
 
     @action
-    async setCurrent(text: string, selectionElemementsData: any, index: { start: number, end: number }, book_id, paragraph_id, remark) {
+    async setCurrent(text: string, selectionElemementsData?: any, index?: { start: number, end: number }, book_id?, paragraph_id?, remark?) {
         this.currentCommit.text = text
         this.currentCommit.remark = '';
         this.currentCommit.selectionElemementsData = selectionElemementsData;
-        this.currentCommit.start = index.start;
-        this.currentCommit.end = index.end;
+        if (index) {
+            this.currentCommit.start = index.start;
+            this.currentCommit.end = index.end;
+        }
         this.currentCommit.type = RemarkType.Word
         this.currentCommit.book_id = book_id;
         this.currentCommit.paragraph_id = paragraph_id;
         this.currentCommit._id = '';
 
+        if (!this.currentCommit.text) {
+            return;
+        }
         let rst = await api.post('/remark/getRemarksByPosOfParagraph', {
             book_id,
             paragraph_id,
@@ -114,12 +122,12 @@ export default class Reading {
                     this.currentCommit.remark = selectedRemark.remark;
                     this.currentCommit._id = selectedRemark._id;
                 }
-                this.currentCommit.relatedRemarks =  _.filter(relatedRemarks, (r) => !(r.start === this.currentCommit.start && r.end === this.currentCommit.end));
+                this.currentCommit.relatedRemarks = _.filter(relatedRemarks, (r) => !(r.start === this.currentCommit.start && r.end === this.currentCommit.end));
             } else {
                 this.currentCommit.relatedRemarks = [];
             }
 
-            this.viewMode = this.currentCommit._id?ViewMode.view:ViewMode.edit;
+            this.viewMode = this.currentCommit._id ? ViewMode.view : ViewMode.edit;
             // console.log(this.currentCommit.relatedRemarks);
         })
 

@@ -1,7 +1,7 @@
 import {Form, List, Spin, Avatar, Card, Row, Col, Button, AutoComplete} from 'antd';
 import './Read.scss';
 
-const ButtonGroup = Button.Group;
+
 import MoliEditor from './../../ui/editor';
 import * as React from 'react';
 import {observable, computed, runInAction, action} from 'mobx';
@@ -15,6 +15,7 @@ import classnames from 'classnames';
 import ReadTabs from './ReadTabs';
 import ReadTools from './ReadTools';
 
+import CloseIcon from 'assets/svg/arrow.svg';
 
 interface CardProps {
     onClick?: any
@@ -37,7 +38,7 @@ export default class Read extends React.Component {
 
     @observable book: any = {}
 
-    @observable mode:number=1
+    @observable mode: number = 1
 
     readerDiv: any;
 
@@ -274,10 +275,85 @@ export default class Read extends React.Component {
 
     }
 
-    @action
-    modeChange(m){
-        this.mode=m;
+
+    renderSideOfOperation() {
+
+        return [<ReadTabs key='s1'/>,
+            <ul key='s2' className='read__chapters'>
+                {
+                    (this.book && this.book.chapters) ? this.book.chapters.map((c) => {
+                        return <li key={c._id}>
+                            {c.title}
+                        </li>;
+                    }) : ''
+                }
+
+            </ul>];
     }
+    closeSideOfHelp(){
+        reading.setCurrent('',)
+    }
+    renderSideOfHelp() {
+        // var viewMode = reading.currentCommit._id?ViewMode.view
+        //todo 有空研究下 为啥不能直接写在元素里边 onClick={()=>reading.setViewMode(ViewMode.edit)}
+        var other = {
+            onClick: () => reading.setViewMode(ViewMode.edit)
+        };
+
+        if (!reading.currentCommit.text) {
+            return '';
+        }
+        return <div className='read-help'>
+
+            <div className='read-help__top'>
+                <span onClick={this.closeSideOfHelp.bind(this)}><CloseIcon></CloseIcon></span>
+
+            </div>
+
+            <div className='read-help__ref'>{reading.currentCommit.text}</div>
+            {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
+            {
+                reading.viewMode === ViewMode.view ?
+                    <Card {...other} style={{width: 300}}><p
+                        dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p>
+                    </Card> :
+                    <div>
+
+                        <MoliEditor
+                            value={reading.currentCommit.remark}
+                            onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
+
+                        <Button type="primary" onClick={this.saveCommit.bind(this)}
+                                htmlType="submit">save</Button>
+                    </div>
+            }
+
+
+            <List
+                itemLayout="horizontal"
+                dataSource={reading.currentCommit.relatedRemarks}
+                renderItem={item => (
+                    <List.Item>
+                        <List.Item.Meta
+                            avatar={<Avatar
+                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                            title={<a href="https://ant.design">{item.text}</a>}
+                            description={<div
+                                dangerouslySetInnerHTML={{__html: item.remark}}></div>}
+                        />
+                    </List.Item>
+                )}
+            />
+        </div>;
+
+
+    }
+
+    @action
+    modeChange(m) {
+        this.mode = m;
+    }
+
     render() {
         // var blocks = [];
         // for (var i = 0; i < 3; i++) {
@@ -293,12 +369,6 @@ export default class Read extends React.Component {
             [];
 
 
-        // var viewMode = reading.currentCommit._id?ViewMode.view
-        //todo 有空研究下 为啥不能直接写在元素里边 onClick={()=>reading.setViewMode(ViewMode.edit)}
-        var other = {
-            onClick: () => reading.setViewMode(ViewMode.edit)
-        };
-
         const loadMoreContent = <div>
             {this.isLoading ? <Spin/> : ''}
         </div>;
@@ -312,25 +382,10 @@ export default class Read extends React.Component {
             <Provider reading={reading}>
 
 
-                <div className='row-layout read noselect' >
+                <div className='row-layout read noselect'>
                     <div className='row-layout__side'>
-
-
-                        <ReadTabs/>
-
-
-                        <ul className='read__chapters'>
-                            {
-                                (this.book && this.book.chapters) ? this.book.chapters.map((c) => {
-                                    return <li>
-                                        {c.title}
-                                    </li>;
-                                }) : ''
-                            }
-
-                        </ul>
-
-
+                        {this.renderSideOfOperation()}
+                        {this.renderSideOfHelp()}
                     </div>
                     <div className='row-layout__content'>
                         <ReadTools mode={this.mode}
@@ -345,52 +400,18 @@ export default class Read extends React.Component {
                             {this.book.cn_name}&nbsp;{this.book.en_name}
                         </div>
 
-                        <div className='read__content'>
+                        <div className='read__subtitle'>
                             <div>{this.isLoading + ''}</div>
                             <div>{this.topBatchNum + '---' + this.bottomBatchNum + '[批次]' + this.maxBatchs} </div>
+
+                        </div>
+                        <div className='read__content'>
 
 
                             <div ref={readerDiv => this.readerDiv = readerDiv} className={readDivClasses}>
                                 {blocks}
                                 {loadMoreContent}
                             </div>
-                        </div>
-                        <div className='read__help'>
-
-                            <div>{reading.currentCommit.text}</div>
-                            {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
-                            {
-                                reading.viewMode === ViewMode.view ?
-                                    <Card {...other} style={{width: 300}}><p
-                                        dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p>
-                                    </Card> :
-                                    <div>
-
-                                        <MoliEditor
-                                            value={reading.currentCommit.remark}
-                                            onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
-
-                                        <Button type="primary" onClick={this.saveCommit.bind(this)}
-                                                htmlType="submit">save</Button>
-                                    </div>
-                            }
-
-
-                            <List
-                                itemLayout="horizontal"
-                                dataSource={reading.currentCommit.relatedRemarks}
-                                renderItem={item => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                            avatar={<Avatar
-                                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                            title={<a href="https://ant.design">{item.text}</a>}
-                                            description={<div
-                                                dangerouslySetInnerHTML={{__html: item.remark}}></div>}
-                                        />
-                                    </List.Item>
-                                )}
-                            />
                         </div>
 
 

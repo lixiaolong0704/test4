@@ -8,8 +8,9 @@ $whiteColor: white;
 
 $textColor: #888;
 $titleColor: #444;
-
 $sideWidth: 200px;
+$miniHeight:50px;
+
 
 @mixin autoStrech() {
   flex-basis: 0%;
@@ -113,11 +114,14 @@ svg {
 
   &__side {
     background-color: $sadColor;
+    position: relative;
+    overflow-x: visible;
     width: $sideWidth;
   }
 
   &__content {
     background-color: $dismayColor;
+    position: relative;
     @include autoStrech();
 
   }

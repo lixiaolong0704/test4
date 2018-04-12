@@ -1,10 +1,19 @@
+
+@import "../vars";
 .canvas-reader {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
   -o-user-select: none;
-  height: 520px;
+  //height: 520px;
+
+  position: absolute;
+  top:50px;
+  bottom:0px;
+  right:50px;
+  left:0px;
+  background-color: $whiteColor;
   overflow: scroll;
 
   &--noscroll{
@@ -12,13 +21,13 @@
   }
 
   &__p {
-    //display: flex;
-    //align-items: flex-start;
-    background-color: antiquewhite;
+    background-color: $whiteColor;
+    margin-bottom: 10px;
+    padding: 5px;
     &_el {
       margin: 2px 0px;
       //margin:20px 20px;
-      padding: 0px 2px;
+      padding: 2px 2px;
       display: inline-block;
       &:hover {
         //background-color: green;
@@ -50,7 +59,7 @@
       }
 
       &_active {
-        background-color: #5890ff;
+        background-color: $happyColor;
 
       }
 

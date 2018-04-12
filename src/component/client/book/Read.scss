@@ -1,39 +1,55 @@
 @import "../../../vars.scss";
-.read{
+
+.read {
   position: relative;
-  padding-right: 50px;
-  &__chapters{
-    li{
+  //padding-right: 50px;
+  &__chapters {
+    li {
       //height: 30px;
       //line-height: 30px;
       padding: 10px;
     }
   }
-  &__content{
+  &__content {
 
 
   }
-  &__help{
+
+  &__paragraphs {
+
+  }
+
+  &-help {
+    &__top {
+      height: $miniHeight;
+      line-height: $miniHeight;
+      background-color: $sadColor2;
+      text-align: right;
+    }
+    &__ref{
+      padding: 10px;
+    }
     position: absolute;
-    top:0px;
-    right: 50px;
+    top: 0px;
+    left: 0px;
     background-color: $sadColor;
-    padding: 10px;
-    width:250px;
 
+    width: 200px;
 
   }
-  &__title{
+  &__title {
     height: 50px;
     line-height: 50px;
-    margin:auto;
+    margin: auto;
     text-align: center;
-    color:$titleColor
+    color: $titleColor
   }
-  &__tools{
+  &__tools {
     position: absolute;
-    right:0px;
-    top:50px;
+    right: 0px;
+    top: 50px;
+    bottom:0;
+    border-left:1px solid gray;
   }
 
 }
