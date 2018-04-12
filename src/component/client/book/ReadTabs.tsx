@@ -8,6 +8,7 @@ import ChapterIcon from 'assets/svg/kno_detail_chapter.svg';
 import HistoryIcon from 'assets/svg/history.svg';
 import UsersIcon from 'assets/svg/users.svg';
 
+
 @observer
 export default class ReadTabs extends React.Component {
 

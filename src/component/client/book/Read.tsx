@@ -13,6 +13,7 @@ import api from '../../../api';
 import _ from 'lodash';
 import classnames from 'classnames';
 import ReadTabs from './ReadTabs';
+import ReadTools from './ReadTools';
 
 
 interface CardProps {
@@ -34,7 +35,10 @@ export default class Read extends React.Component {
         location: any
     };
 
-    @observable book: any = {};
+    @observable book: any = {}
+
+    @observable mode:number=1
+
     readerDiv: any;
 
     @computed
@@ -270,6 +274,10 @@ export default class Read extends React.Component {
 
     }
 
+    @action
+    modeChange(m){
+        this.mode=m;
+    }
     render() {
         // var blocks = [];
         // for (var i = 0; i < 3; i++) {
@@ -304,7 +312,7 @@ export default class Read extends React.Component {
             <Provider reading={reading}>
 
 
-                <div className='row-layout read'>
+                <div className='row-layout read noselect' >
                     <div className='row-layout__side'>
 
 
@@ -325,65 +333,66 @@ export default class Read extends React.Component {
 
                     </div>
                     <div className='row-layout__content'>
+                        <ReadTools mode={this.mode}
+                                   modeChange={this.modeChange.bind(this)}
+                                   className='read__tools'
+                                   pre={this.Pre.bind(this)}
+                                   next={this.Next.bind(this)}
+                                   savePosition={this.saveReadingPosition.bind(this)}
+                        />
+
                         <div className='read__title'>
                             {this.book.cn_name}&nbsp;{this.book.en_name}
                         </div>
 
-                        <ButtonGroup>
-                            <Button type="primary" icon="cloud"/>
-                            <Button type="primary" icon="cloud-download"/>
-
-                        </ButtonGroup>
-                        <Row>
-                            <Col span={12}>
-                                <div>{this.isLoading + ''}</div>
-                                <div>{this.topBatchNum + '---' + this.bottomBatchNum + '[批次]' + this.maxBatchs} </div>
-                                <Button type="primary" onClick={this.saveReadingPosition.bind(this)}>保存阅读位置</Button>
-                                <div><Button onClick={this.Pre.bind(this)}>Pre</Button> <Button
-                                    onClick={this.Next.bind(this)}>Next</Button></div>
-
-                                <div ref={readerDiv => this.readerDiv = readerDiv} className={readDivClasses}>
-                                    {blocks}
-                                    {loadMoreContent}
-                                </div>
-                            </Col>
-                            <Col span={12}>
-                                <div>{reading.currentCommit.text}</div>
-                                {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
-                                {
-                                    reading.viewMode === ViewMode.view ?
-                                        <Card {...other} style={{width: 300}}><p
-                                            dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p>
-                                        </Card> :
-                                        <div>
-
-                                            <MoliEditor
-                                                value={reading.currentCommit.remark}
-                                                onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
-
-                                            <Button type="primary" onClick={this.saveCommit.bind(this)}
-                                                    htmlType="submit">save</Button>
-                                        </div>
-                                }
+                        <div className='read__content'>
+                            <div>{this.isLoading + ''}</div>
+                            <div>{this.topBatchNum + '---' + this.bottomBatchNum + '[批次]' + this.maxBatchs} </div>
 
 
-                                <List
-                                    itemLayout="horizontal"
-                                    dataSource={reading.currentCommit.relatedRemarks}
-                                    renderItem={item => (
-                                        <List.Item>
-                                            <List.Item.Meta
-                                                avatar={<Avatar
-                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                                title={<a href="https://ant.design">{item.text}</a>}
-                                                description={<div
-                                                    dangerouslySetInnerHTML={{__html: item.remark}}></div>}
-                                            />
-                                        </List.Item>
-                                    )}
-                                />
-                            </Col>
-                        </Row>
+                            <div ref={readerDiv => this.readerDiv = readerDiv} className={readDivClasses}>
+                                {blocks}
+                                {loadMoreContent}
+                            </div>
+                        </div>
+                        <div className='read__help'>
+
+                            <div>{reading.currentCommit.text}</div>
+                            {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
+                            {
+                                reading.viewMode === ViewMode.view ?
+                                    <Card {...other} style={{width: 300}}><p
+                                        dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p>
+                                    </Card> :
+                                    <div>
+
+                                        <MoliEditor
+                                            value={reading.currentCommit.remark}
+                                            onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
+
+                                        <Button type="primary" onClick={this.saveCommit.bind(this)}
+                                                htmlType="submit">save</Button>
+                                    </div>
+                            }
+
+
+                            <List
+                                itemLayout="horizontal"
+                                dataSource={reading.currentCommit.relatedRemarks}
+                                renderItem={item => (
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={<Avatar
+                                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                            title={<a href="https://ant.design">{item.text}</a>}
+                                            description={<div
+                                                dangerouslySetInnerHTML={{__html: item.remark}}></div>}
+                                        />
+                                    </List.Item>
+                                )}
+                            />
+                        </div>
+
 
                     </div>
 

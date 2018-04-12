@@ -1,11 +1,27 @@
 @import "../../../vars.scss";
 .read{
+  position: relative;
+  padding-right: 50px;
   &__chapters{
     li{
       //height: 30px;
       //line-height: 30px;
       padding: 10px;
     }
+  }
+  &__content{
+
+
+  }
+  &__help{
+    position: absolute;
+    top:0px;
+    right: 50px;
+    background-color: $sadColor;
+    padding: 10px;
+    width:250px;
+
+
   }
   &__title{
     height: 50px;
@@ -14,4 +30,10 @@
     text-align: center;
     color:$titleColor
   }
+  &__tools{
+    position: absolute;
+    right:0px;
+    top:50px;
+  }
+
 }
