@@ -3,15 +3,29 @@
 .read {
   position: relative;
   //padding-right: 50px;
-  &__chapters {
-    li {
-      //height: 30px;
-      //line-height: 30px;
-      padding: 10px;
+
+  &__side {
+    &-chapters {
+      li {
+        //height: 30px;
+        //line-height: 30px;
+        padding: 10px;
+        color: $textColor
+      }
+    }
+    &-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      svg {
+        width: $svgBigSize;
+        height: $svgBigSize;
+        fill: $textColor;
+      }
+
     }
   }
   &__content {
-
 
   }
 
@@ -19,37 +33,78 @@
 
   }
 
+  $helpWidth: 800px;
   &-help {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 100%;
+    align-content: flex-start;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: $dismayColor;
+    z-index: 101;
+    //width: $sideWidth;
+    width: $helpWidth;
+
     &__top {
       height: $miniHeight;
       line-height: $miniHeight;
       background-color: $sadColor2;
-      text-align: right;
-    }
-    &__ref{
-      padding: 10px;
-    }
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: $sadColor;
+      text-align: left;
+      width: 100%;
+      padding-left: 10px;
+      svg {
+        fill: $textColor;
+        cursor: pointer;
 
-    width: 200px;
+      }
+    }
+    &__ref {
+      padding: 10px;
+      color: $happyColor;
+      width: 100%;
+      height: $miniHeight;
+
+    }
+    &__editor {
+      margin-top: 10px;
+      widtH: 39%;
+    }
+    &__remarks {
+
+      display: block;
+      width: 60%;
+      height: 400px;
+      &-title {
+        color: $titleColor;
+      }
+      ul {
+        li {
+          padding: 5px 10px;
+          border-top: 1px solid $dismayColor;
+
+        }
+      }
+    }
 
   }
+
   &__title {
-    height: 50px;
-    line-height: 50px;
+    height: 43px;
+    line-height: 43px;
     margin: auto;
     text-align: center;
-    color: $titleColor
+    color: $textColor;
+    background-color: $dismayColor;
   }
   &__tools {
     position: absolute;
     right: 0px;
     top: 50px;
-    bottom:0;
-    border-left:1px solid gray;
+    bottom: 0;
+    border-left: 1px solid gray;
   }
 
 }

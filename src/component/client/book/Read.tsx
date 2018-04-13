@@ -17,6 +17,10 @@ import ReadTools from './ReadTools';
 
 import CloseIcon from 'assets/svg/arrow.svg';
 
+import ArrowRightIcon from 'assets/svg/ar2.svg';
+import ArrowLeftIcon from 'assets/svg/ar1.svg';
+import ClickOutside from 'react-click-outside';
+
 interface CardProps {
     onClick?: any
 }
@@ -36,9 +40,9 @@ export default class Read extends React.Component {
         location: any
     };
 
-    @observable book: any = {}
+    @observable book: any = {};
 
-    @observable mode: number = 1
+    @observable mode: number = 1;
 
     readerDiv: any;
 
@@ -106,6 +110,9 @@ export default class Read extends React.Component {
 
                     setTimeout(() => {
                         // firstP.scrollIntoView();
+                        if(this.readerDiv){
+
+                        }
                         console.log((this.readerDiv.scrollHeight - preScrollHeight) + '..');
                     });
 
@@ -134,7 +141,7 @@ export default class Read extends React.Component {
     }
 
 
-    @observable topBatchNum: number = 3;
+    @observable topBatchNum: number = 1;
     @observable bottomBatchNum: number = this.topBatchNum;
 
     queryPs: any = {
@@ -276,10 +283,17 @@ export default class Read extends React.Component {
     }
 
 
+    @action
+    tabChange(tab){
+        this.sideTab =tab;
+    }
+    @observable sideTab :string = 'Chapter'
     renderSideOfOperation() {
 
-        return [<ReadTabs key='s1'/>,
-            <ul key='s2' className='read__chapters'>
+        return [
+            <ReadTabs key='s1' defaultTab={this.sideTab} tabChange={this.tabChange.bind(this)}/>,
+
+            this.sideTab==='Chapter'?<ul key='s2' className='read__side-chapters'>
                 {
                     (this.book && this.book.chapters) ? this.book.chapters.map((c) => {
                         return <li key={c._id}>
@@ -287,12 +301,15 @@ export default class Read extends React.Component {
                         </li>;
                     }) : ''
                 }
+            </ul>:'',
+            <div key='read__footer' className='read__side-footer'><ArrowLeftIcon/></div>
+        ];
+    }
 
-            </ul>];
+    closeSideOfHelp() {
+        reading.setCurrent('',);
     }
-    closeSideOfHelp(){
-        reading.setCurrent('',)
-    }
+
     renderSideOfHelp() {
         // var viewMode = reading.currentCommit._id?ViewMode.view
         //todo 有空研究下 为啥不能直接写在元素里边 onClick={()=>reading.setViewMode(ViewMode.edit)}
@@ -304,46 +321,46 @@ export default class Read extends React.Component {
             return '';
         }
         return <div className='read-help'>
-
             <div className='read-help__top'>
-                <span onClick={this.closeSideOfHelp.bind(this)}><CloseIcon></CloseIcon></span>
+                <span onClick={this.closeSideOfHelp.bind(this)}><ArrowRightIcon></ArrowRightIcon></span>
 
             </div>
 
             <div className='read-help__ref'>{reading.currentCommit.text}</div>
+
+
+            <div className='read-help__remarks'>
+                <ul>
+                    {reading.currentCommit.relatedRemarks ? reading.currentCommit.relatedRemarks.map(r =>
+                        <li key={r._id}>
+                            <div className='read-help__remarks-title'>{r.text}</div>
+                            <div dangerouslySetInnerHTML={{__html: r.remark}}></div>
+                        </li>
+                    ) : ''
+                    }
+                </ul>
+
+            </div>
             {/*onClick={()=>reading.setViewMode(ViewMode.edit)}*/}
-            {
-                reading.viewMode === ViewMode.view ?
-                    <Card {...other} style={{width: 300}}><p
-                        dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p>
-                    </Card> :
-                    <div>
+            <div className='read-help__editor'>
+                {
+                    reading.viewMode === ViewMode.view ?
+                        <Card {...other} style={{width: 300}}><p
+                            dangerouslySetInnerHTML={{__html: reading.currentCommit.remark}}></p>
+                        </Card> :
+                        <div>
 
-                        <MoliEditor
-                            value={reading.currentCommit.remark}
-                            onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
+                            <MoliEditor
+                                value={reading.currentCommit.remark}
+                                onChange={(html) => reading.setCurrentRemark(html)}></MoliEditor>
 
-                        <Button type="primary" onClick={this.saveCommit.bind(this)}
-                                htmlType="submit">save</Button>
-                    </div>
-            }
+                            <Button type="primary" onClick={this.saveCommit.bind(this)}
+                                    htmlType="submit">save</Button>
+                        </div>
+                }
+            </div>
 
 
-            <List
-                itemLayout="horizontal"
-                dataSource={reading.currentCommit.relatedRemarks}
-                renderItem={item => (
-                    <List.Item>
-                        <List.Item.Meta
-                            avatar={<Avatar
-                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                            title={<a href="https://ant.design">{item.text}</a>}
-                            description={<div
-                                dangerouslySetInnerHTML={{__html: item.remark}}></div>}
-                        />
-                    </List.Item>
-                )}
-            />
         </div>;
 
 
@@ -383,9 +400,13 @@ export default class Read extends React.Component {
 
 
                 <div className='row-layout read noselect'>
-                    <div className='row-layout__side'>
+
+
+                    {this.renderSideOfHelp()}
+
+                    <div className='row-layout__side read__side'>
                         {this.renderSideOfOperation()}
-                        {this.renderSideOfHelp()}
+
                     </div>
                     <div className='row-layout__content'>
                         <ReadTools mode={this.mode}

@@ -1,48 +1,117 @@
 @import "../../../vars.scss";
 
+
+.app-menu {
+  list-style-type: none;
+  text-align: left;
+  vertical-align: middle;
+  display: flex;
+  flex-direction: row;
+  float:left;
+  padding-left: 20px;
+  &__text, &__icon {
+    vertical-align: middle;
+    margin-right: 5px;
+    color: inherit;
+
+  }
+  &__item {
+    height: 50px;
+    line-height: 50px;
+    color: $textColor;
+    margin-right: 10px;
+    svg {
+      fill: $textColor;
+      width:16px;
+      height: 16px;
+    }
+    a {
+      text-decoration: none;
+      vertical-align: middle;
+      //color:inherit;
+      &:visited, &:hover {
+        //color:inherit;
+      }
+    }
+    &:hover {
+      color: $whiteColor;
+      svg {
+        fill: $whiteColor;
+      }
+    }
+    &_selected {
+      color: $happyColor;
+      &:visited, &:hover {
+        color: $happyColor;
+      }
+      svg {
+        fill: $happyColor;
+      }
+    }
+  }
+
+}
+
+
+
 .app-header {
-  background-color: $whiteColor;
+  background-color:$sadColor;
   height: 50px;
   line-height: 50px;
   color: white;
   vertical-align: middle;
-  padding: 0px 20px 0px 0px;
+  padding: 0px 0px 0px 0px;
 
   border-bottom: 1px solid $dismayColor;
   margin-bottom: -1px;
 
-  &__logo {
+  display: flex;
+  flex-direction: row;
+
+  &__side{
+    display: inline-block;
+    background: $sadColor;
     width: $sideWidth;
     height: 100%;
-    background: $sadColor;
-    margin: 0px 0px 0px 0;
-    float: left;
-    display: inline-block;
-    border-bottom: 2px solid $happyColor;
+    vertical-align: middle;
+
+    border-bottom: 1px solid $happyColor;
+
+
+    //Arial Rounded MT Bold
+
     svg {
-      width: 168px;
-      height: 36px;
+      width: 80px;
+      height: 16px;
+      fill:$happyColor;
+      margin-left: 80px;
+
     }
   }
 
+
   &__right {
-    float: right;
     height: 100%;
+    text-align: right;
+    @include autoStrech();
+    border-bottom: 1px solid $borderColor;
   }
   &__username {
     color: $textColor;
     height: 50px;
     line-height: 50px;
     display: inline-block;
+    float:right;
     svg {
       margin-left: 10px;
       width: 11px;
       height: 11px;
       fill: $textColor;
+      margin-right: 20px;
 
     }
     padding-left: 20px;
-    border-left: 1px solid $dismayColor;
+    //border-left: 1px solid $borderColor;
   }
   &__panel {
     background-color: $sadColor;

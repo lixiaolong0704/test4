@@ -42,52 +42,7 @@
 
     }
   }
-  &-menu {
-    width: 100%;
-    list-style-type: none;
-    padding: 10px 20px;
-    text-align: left;
-    vertical-align: middle;
 
-    &__text, &__icon {
-      vertical-align: middle;
-      margin-right: 10px;
-      color: inherit;
-
-    }
-    &__item {
-      height: 50px;
-      line-height: 50px;
-      color: $textColor;
-      svg {
-        fill: $textColor;
-      }
-      a {
-        text-decoration: none;
-        vertical-align: middle;
-        //color:inherit;
-        &:visited, &:hover {
-          //color:inherit;
-        }
-      }
-      &:hover {
-        color: $whiteColor;
-        svg {
-          fill: $whiteColor;
-        }
-      }
-      &_selected {
-        color: $happyColor;
-        &:visited, &:hover {
-          color: $happyColor;
-        }
-        svg {
-          fill: $happyColor;
-        }
-      }
-    }
-
-  }
   &-footer {
 
   }

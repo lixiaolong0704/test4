@@ -12,8 +12,14 @@
     margin:10px 20px;
     cursor: pointer;
     svg{
-      width:18px;
-      height: 18px;
+      width:$svgBigSize;
+      height: $svgBigSize;
+      fill:$textColor;
+    }
+    &--active{
+      svg{
+        fill:$textColor;
+      }
     }
   }
 }
