@@ -5,6 +5,9 @@
   //padding-right: 50px;
 
   &__side {
+
+    width: $sideWidth;
+
     &-chapters {
       li {
         //height: 30px;
@@ -24,6 +27,10 @@
       }
 
     }
+    &--fold {
+      width: $miniHeight;
+    }
+
   }
   &__content {
 

@@ -5,7 +5,7 @@ import './Read.scss';
 import MoliEditor from './../../ui/editor';
 import * as React from 'react';
 import {observable, computed, runInAction, action} from 'mobx';
-import {observer, Provider} from 'mobx-react';
+import {observer, Provider,inject} from 'mobx-react';
 import MBlock from './../../MBlock';
 import Reading from '../../store/Reading';
 import {ViewMode} from '../../store/Reading';
@@ -32,12 +32,14 @@ enum ScrollDirection {
 
 const reading = new Reading();
 
+@inject('global')
 @observer
 export default class Read extends React.Component {
 
 
     props: {
-        location: any
+        location: any,
+        global?:any
     };
 
     @observable book: any = {};
@@ -286,23 +288,38 @@ export default class Read extends React.Component {
     @action
     tabChange(tab){
         this.sideTab =tab;
+        this.props.global.setIsFoldLeftSideOfRead(false);
     }
     @observable sideTab :string = 'Chapter'
     renderSideOfOperation() {
 
-        return [
-            <ReadTabs key='s1' defaultTab={this.sideTab} tabChange={this.tabChange.bind(this)}/>,
+        var sides=this.props.global.isFoldLeftSideOfRead?'':<div key='sides' >
+            {
+                this.sideTab==='Chapter'?<ul className='read__side-chapters'>
+                    {
+                        (this.book && this.book.chapters) ? this.book.chapters.map((c) => {
+                            return <li key={c._id}>
+                                {c.title}
+                            </li>;
+                        }) : ''
+                    }
+                </ul>:''
 
-            this.sideTab==='Chapter'?<ul key='s2' className='read__side-chapters'>
-                {
-                    (this.book && this.book.chapters) ? this.book.chapters.map((c) => {
-                        return <li key={c._id}>
-                            {c.title}
-                        </li>;
-                    }) : ''
-                }
-            </ul>:'',
-            <div key='read__footer' className='read__side-footer'><ArrowLeftIcon/></div>
+            }
+            {
+                this.sideTab ==='Info'? <div>
+                    {this.book && this.book.intro}
+                </div>:''
+            }
+        </div>
+
+
+        return [
+            <ReadTabs key='s1' isFold={this.props.global.isFoldLeftSideOfRead} defaultTab={this.sideTab} tabChange={this.tabChange.bind(this)}/>,
+            sides,
+            <div key='read__footer' className='read__side-footer' onClick={e=>this.props.global.setIsFoldLeftSideOfRead(!this.props.global.isFoldLeftSideOfRead)}>
+                {this.props.global.isFoldLeftSideOfRead?<ArrowRightIcon/>:<ArrowLeftIcon/>}
+            </div>
         ];
     }
 
@@ -394,6 +411,10 @@ export default class Read extends React.Component {
             'canvas-reader--noscroll': this.isLoading
         });
 
+        const read__sideClasses =classnames('row-layout__side','read__side',{
+            'read__side--fold':this.props.global.isFoldLeftSideOfRead
+        });
+
         return (
 
             <Provider reading={reading}>
@@ -404,7 +425,7 @@ export default class Read extends React.Component {
 
                     {this.renderSideOfHelp()}
 
-                    <div className='row-layout__side read__side'>
+                    <div className={read__sideClasses}>
                         {this.renderSideOfOperation()}
 
                     </div>

@@ -10,7 +10,7 @@ const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeM
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
-
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
 const publicPath = '/';
@@ -21,7 +21,7 @@ const publicUrl = '';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
 const AutoDllPlugin = require('autodll-webpack-plugin');
-
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -29,7 +29,8 @@ module.exports = {
     // context: path.join(__dirname, '/src'),
     // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
     // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
-    devtool: 'cheap-module-source-map',
+    // devtool: 'cheap-module-source-map',
+    devtool: 'source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     // The first two entry points enable "hot" CSS and auto-refreshes for JS.
@@ -100,7 +101,7 @@ module.exports = {
         ],
         alias: {
 
-             uis: path.resolve(__dirname, '../src/ui/'),
+             'ui': path.resolve(__dirname, '../src/ui/index'),
              assets: path.resolve(__dirname, '../src/assets/'),
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
@@ -112,6 +113,7 @@ module.exports = {
             // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
             // please link the files into your node_modules/ and let module-resolution kick in.
             // Make sure your source files are compiled, as they will not be processed in any way.
+            new TsconfigPathsPlugin({}),
             new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
         ],
     },
@@ -131,7 +133,7 @@ module.exports = {
                 test: /\.(ts|tsx)$/,
                 loader: require.resolve('tslint-loader'),
                 enforce: 'pre',
-                include: paths.appSrc,
+                include: paths.appSrc
             },
             {
                 test: /\.js$/,
@@ -222,38 +224,81 @@ module.exports = {
                     },
                     {
                         test: /\.scss$/,
-                        use: [
-                            {
-                                loader: require.resolve('style-loader'),
-                            },
-                            {
-                                loader: require.resolve('css-loader'),
-                                options: {
-                                    importLoaders: 1,
-                                }
-                            },
-                            {
-                                loader: require.resolve('sass-loader'),
-                            },
-                            {
-                                loader: require.resolve('postcss-loader'),
-                                options: {
-                                    ident: 'postcss',
-                                    plugins: () => [
-                                        require('postcss-flexbugs-fixes'),
-                                        autoprefixer({
-                                            browsers: [
-                                                '>1%',
-                                                'last 4 versions',
-                                                'Firefox ESR',
-                                                'not ie < 9',
-                                            ],
-                                            flexbox: 'no-2009',
-                                        }),
-                                    ],
+                        use:ExtractTextPlugin.extract({
+                            fallback: 'style-loader',
+                            use: [
+                                {
+                                    loader: 'css-loader',
+                                    options: {
+                                        // If you are having trouble with urls not resolving add this setting.
+                                        // See https://github.com/webpack-contrib/css-loader#url
+                                        url: false,
+                                        minimize: true,
+                                        sourceMap: true
+                                    }
                                 },
-                            },
-                        ]
+                                {
+                                    loader: require.resolve('postcss-loader'),
+                                    options: {
+                                        ident: 'postcss',
+                                        plugins: () => [
+                                            require('postcss-flexbugs-fixes'),
+                                            autoprefixer({
+                                                browsers: [
+                                                    '>1%',
+                                                    'last 4 versions',
+                                                    'Firefox ESR',
+                                                    'not ie < 9',
+                                                ],
+                                                flexbox: 'no-2009',
+                                            }),
+                                        ],
+                                    },
+                                },
+                                {
+                                    loader: 'sass-loader',
+                                    options: {
+                                        sourceMap: true
+                                    }
+                                }
+
+                            ]
+                            // use: [
+                            //     {
+                            //         loader: require.resolve('style-loader'),
+                            //     },
+                            //     {
+                            //         loader: require.resolve('css-loader'),
+                            //         options: {
+                            //             importLoaders: 1,
+                            //         }
+                            //     },
+                            //     {
+                            //         loader: require.resolve('sass-loader'),
+                            //     },
+                            //     {
+                            //         loader: require.resolve('postcss-loader'),
+                            //         options: {
+                            //             ident: 'postcss',
+                            //             plugins: () => [
+                            //                 require('postcss-flexbugs-fixes'),
+                            //                 autoprefixer({
+                            //                     browsers: [
+                            //                         '>1%',
+                            //                         'last 4 versions',
+                            //                         'Firefox ESR',
+                            //                         'not ie < 9',
+                            //                     ],
+                            //                     flexbox: 'no-2009',
+                            //                 }),
+                            //             ],
+                            //         },
+                            //     },
+                            // ]
+                        }),
+
+
+
                     },
                     // "postcss" loader applies autoprefixer to our CSS.
                     // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -344,6 +389,17 @@ module.exports = {
         // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
         // In development, this will be an empty string.
         new InterpolateHtmlPlugin(env.raw),
+
+
+        /**
+         * https://github.com/webpack/extract-text-webpack-plugin/blob/webpack-1/README.md
+         * @type {[type]}
+         */
+        new ExtractTextPlugin({
+            filename: "[name].[contenthash].css",
+            allChunks: true
+        }),
+
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             inject: true,

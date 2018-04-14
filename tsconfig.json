@@ -13,6 +13,7 @@
     "moduleResolution": "node",
     "rootDir": "src",
 
+    "baseUrl":"src",
 
     "forceConsistentCasingInFileNames": false,
     "noImplicitReturns": false,
@@ -21,7 +22,11 @@
     "strictNullChecks": false,
     "suppressImplicitAnyIndexErrors": false,
     "noUnusedLocals": false,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "paths": {
+      "ui": ["./src/ui"]
+    }
+
   },
 
   "exclude": [

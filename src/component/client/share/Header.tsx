@@ -3,14 +3,9 @@ import {observable, computed, runInAction, action} from 'mobx';
 import {observer, inject} from 'mobx-react';
 import {BrowserRouter as Router, Route, Link, NavLink} from 'react-router-dom';
 import * as React from 'react';
-import api from '../../../api';
 import {Scrollbars} from 'react-custom-scrollbars';
-import InfiniteScroll from 'react-infinite-scroller';
-import PerfectScrollbar from 'perfect-scrollbar';
-import 'uis/perfect-scrollbar/perfect-scrollbar.css';
 import LogoIcon from 'assets/svg/logo2.svg';
-
-import DropdownApple from '../../../ui/dropdown-apple/index';
+import {DropdownApple} from 'ui/index';
 import ArrowDownIcon from 'assets/svg/icon-arrow-down.svg';
 import ExitIcon from 'assets/svg/icon-exit.svg';
 import SettingIcon from 'assets/svg/icon-setting.svg';

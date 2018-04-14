@@ -6,9 +6,7 @@ import * as React from 'react';
 import api from '../../../api';
 import {Scrollbars} from 'react-custom-scrollbars';
 import InfiniteScroll from 'react-infinite-scroller';
-
-
-import PerfectScrollbar from '../../../ui/perfect-scrollbar/index';
+import {PerfectScrollbar} from 'ui/index';
 
 @observer
 export default class Book extends React.Component {

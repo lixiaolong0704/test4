@@ -1,11 +1,17 @@
-import {Table, Spin, Button} from 'antd';
+import {Table, Spin} from 'antd';
+import './BookManage.scss';
+
+
 import * as React from 'react';
 
 import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
 import api from '../../api';
 import {NavLink} from 'react-router-dom';
-import BookEdit from './BookEdit';
+import BookEdit from "./BookEdit";
+import {Button} from "ui/index";
+import EditIcon from 'assets/svg/edit.svg';
+import DeleteIcon from 'assets/svg/delete.svg';
 
 @observer
 export default class BookManage extends React.Component {
@@ -83,22 +89,6 @@ export default class BookManage extends React.Component {
         var {page} = this.props.location.match.params;
         page = page ? parseInt(page) : 1;
 
-        const columns = [{
-            title: '书名',
-            dataIndex: 'cn_name',
-            key: 'cn_name',
-            render: (text, record) => <NavLink target="_blank" to={`/read/${record._id}`}>{text}</NavLink>,
-        }, {
-            title: '书名',
-            dataIndex: 'en_name',
-            key: 'en_name',
-        },
-            {
-                title: '时间',
-                dataIndex: 'create_time',
-                key: 'create_time',
-            }];
-
         var pageConfig = {
             total: this.data.total,
             defaultCurrent: page,
@@ -113,14 +103,12 @@ export default class BookManage extends React.Component {
 
         // console.log(this.data.docs);
 
-        var dataSource = this.data.docs.map(d => d);
+        var books = this.data.docs.map(d => d);
 
-        var props = {
-            onClose: this.onCloseEdit.bind(this)
-        };
+
         return (
-            <div>
-                {this.isShowEdit ? <BookEdit {...props}></BookEdit> : ''}
+            <div className='book-manage'>
+                <BookEdit modalIsOpen={this.isShowEdit} closeModal={this.onCloseEdit.bind(this)}></BookEdit>
                 <div>
                     <Button onClick={this.showEdit.bind(this)} type="primary">新增</Button>
                     <Button onClick={this.importBook.bind(this)} type="primary">导入书籍</Button>
@@ -128,7 +116,34 @@ export default class BookManage extends React.Component {
 
                 <div>
                     {this.isLoading ? <Spin/> : ''}
-                    <Table rowKey="_id" columns={columns} pagination={pageConfig} dataSource={dataSource} size="small"/>
+
+                    <table className='ml-table'>
+                        <thead>
+                        <tr>
+                            <td>书名</td>
+                            <td></td>
+                            <td>时间</td>
+                            <td></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {books.map(b => <tr key={b._id}>
+
+                            <td><NavLink target="_blank" to={`/read/${b._id}`}>{b.cn_name}</NavLink></td>
+                            <td>{b.en_name}</td>
+                            <td>{b.create_time}</td>
+                            <td>
+                                <span><EditIcon></EditIcon></span>
+                                <span><DeleteIcon></DeleteIcon></span>
+                            </td>
+                        </tr>)}
+                        </tbody>
+
+
+                    </table>
+
+
+                    {/*<Table rowKey="_id" columns={columns} pagination={pageConfig} dataSource={dataSource} size="small"/>*/}
                 </div>
 
 

@@ -1,18 +1,18 @@
 @import "../../../vars.scss";
 
-
 .app-menu {
   list-style-type: none;
   text-align: left;
   vertical-align: middle;
   display: flex;
   flex-direction: row;
-  float:left;
+  float: left;
   padding-left: 20px;
+  $blk: &;
   &__text, &__icon {
     vertical-align: middle;
     margin-right: 5px;
-    color: inherit;
+    color: $textColor;
 
   }
   &__item {
@@ -22,7 +22,7 @@
     margin-right: 10px;
     svg {
       fill: $textColor;
-      width:16px;
+      width: 16px;
       height: 16px;
     }
     a {
@@ -40,7 +40,11 @@
       }
     }
     &_selected {
-      color: $happyColor;
+      #{$blk} {
+        &__text, &__icon {
+          color: $happyColor;
+        }
+      }
       &:visited, &:hover {
         color: $happyColor;
       }
@@ -52,10 +56,8 @@
 
 }
 
-
-
 .app-header {
-  background-color:$sadColor;
+  background-color: $sadColor;
   height: 50px;
   line-height: 50px;
   color: white;
@@ -68,7 +70,7 @@
   display: flex;
   flex-direction: row;
 
-  &__side{
+  &__side {
     display: inline-block;
     background: $sadColor;
     width: $sideWidth;
@@ -77,18 +79,16 @@
 
     border-bottom: 1px solid $happyColor;
 
-
     //Arial Rounded MT Bold
 
     svg {
       width: 80px;
       height: 16px;
-      fill:$happyColor;
+      fill: $happyColor;
       margin-left: 80px;
 
     }
   }
-
 
   &__right {
     height: 100%;
@@ -101,7 +101,7 @@
     height: 50px;
     line-height: 50px;
     display: inline-block;
-    float:right;
+    float: right;
     svg {
       margin-left: 10px;
       width: 11px;

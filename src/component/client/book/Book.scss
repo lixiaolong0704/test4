@@ -1,6 +1,7 @@
 @import "../../../vars.scss";
 .book {
-  width:100%;
+  width:$mainWidth;
+  margin: auto;
   height: 100%;
   display: block;
   position: relative;

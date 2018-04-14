@@ -1,25 +1,41 @@
 @import "../../../vars";
-.read-tabs{
+
+.read-tabs {
   display: flex;
   flex-direction: row;
-  width:100%;
-
+  width: 100%;
   align-content: center;
   justify-content: space-between;
   background-color: $sadColor2;
-  &__tab{
+  $blk: &;
+  &__tab {
 
-    margin:10px 20px;
+    margin: 10px 20px;
     cursor: pointer;
-    svg{
-      width:$svgBigSize;
+    svg {
+      width: $svgBigSize;
       height: $svgBigSize;
-      fill:$textColor;
+      fill: $textColor;
     }
-    &--active{
-      svg{
-        fill:$textColor;
+    &--active {
+      svg {
+        fill: $happyColor;
       }
     }
   }
+
+  &--fold {
+    flex-direction: column;
+    width: $miniHeight;
+    #{$blk} {
+      &__tab {
+        margin:auto;
+        height: $miniHeight;
+        line-height: $miniHeight;
+      }
+
+    }
+
+  }
+
 }

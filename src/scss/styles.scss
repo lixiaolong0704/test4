@@ -1,0 +1,56 @@
+/* tables still need 'cellspacing="0"' in the markup */
+@import "../vars";
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.row-layout {
+  display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  @include autoStrech();
+  position: relative;
+  &__side {
+    background-color: $sadColor;
+    position: relative;
+    overflow-x: visible;
+    //width: $sideWidth;
+  }
+
+  &__content {
+    background-color: $dismayColor;
+    position: relative;
+    @include autoStrech();
+
+  }
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                   supported by Chrome and Opera */
+}
+
+svg {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+
+}
+
+.ml-table {
+  tbody,thead{
+    tr {
+      td {
+        padding:5px 10px;
+        border: 1px solid $textColor;
+      }
+    }
+  }
+}
