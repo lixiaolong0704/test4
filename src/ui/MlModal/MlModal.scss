@@ -1,0 +1,23 @@
+.ml-modal{
+  &__modal{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width:500px;
+    transform: translate(-50%,-50%);
+    background-color: papayawhip;
+
+  }
+  &__title{
+    text-align: center;
+
+  }
+  &__close{
+    position: absolute;
+    right: 0px;
+    top:0px;
+    transform: translateX(100%);
+    cursor: pointer;
+
+  }
+}

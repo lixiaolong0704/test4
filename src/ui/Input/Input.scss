@@ -1,0 +1,50 @@
+.ml-input{
+
+  &__label{
+
+  }
+  &__input{
+    appearance: none;
+    background-color: transparent;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    color: #444;
+    display: block;
+    height: 26px;
+    box-sizing: border-box;
+    line-height: 1;
+    outline: none;
+    padding: 0 10px;
+    transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    width: 100%;
+    &:focus{
+      color: #444;
+      border-color: #aac814;
+    }
+  }
+  &__textarea{
+    appearance: none;
+    background-color: transparent;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    color: #444;
+    display: block;
+    box-sizing: border-box;
+    line-height: 1;
+    outline: none;
+    padding: 0 10px;
+    transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    width: 100%;
+    &:focus{
+      color: #444;
+      border-color: #aac814;
+    }
+
+  }
+  &__error{
+
+  }
+
+}
