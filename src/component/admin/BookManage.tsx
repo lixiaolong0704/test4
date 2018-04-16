@@ -10,8 +10,13 @@ import api from '../../api';
 import {NavLink} from 'react-router-dom';
 import BookEdit from './BookEdit';
 import {Button} from 'ui/index';
+//
+//
 import EditIcon from 'assets/svg/edit.svg';
 import DeleteIcon from 'assets/svg/delete.svg';
+
+
+
 import Pagination from 'rc-pagination';
 import 'rc-pagination/assets/index.css';
 @observer
@@ -106,6 +111,7 @@ export default class BookManage extends React.Component {
 
         return (
             <div className='book-manage'>
+                <DeleteIcon></DeleteIcon>
                 <BookEdit modalIsOpen={this.isShowEdit} bookId={this.currentBookId} closeModal={this.onCloseEdit.bind(this)}></BookEdit>
                 <div className='book-manage__operation'>
                     <Button onClick={e=>this.showEdit()} type="primary">新增</Button>
@@ -131,7 +137,9 @@ export default class BookManage extends React.Component {
                             <td>{b.en_name}</td>
                             <td>{b.create_time}</td>
                             <td>
-                                <span onClick={e=>this.showEdit(b._id)}><EditIcon></EditIcon></span>
+                                <span onClick={e=>this.showEdit(b._id)}>
+                                    <EditIcon></EditIcon>
+                                </span>
                                 <span><DeleteIcon></DeleteIcon></span>
                             </td>
                         </tr>)}

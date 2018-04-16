@@ -12,13 +12,34 @@ import {MRForm, Button, Input, MlModal} from 'ui/index';
 @observer
 class BookEdit extends React.Component {
 
+    constructor(props) {
+        super(props)
+        this.form = new MRForm({
+            fields: {
+                "cn_name": {
+                    label: '中文名',
+                    rules: 'required|string|between:5,200'
+                },
+                "en_name": {
+                    label: '英文名',
+                    rules: 'required|string|between:5,200'
+                },
+                "intro":{
+                        label: '简介',
+                        rules: 'required|string|between:5,500',
+                },
+                "dynamicFields": {}
+            },
+            onSuccess: this.onSuccess.bind(this)
+        });
+    }
 
     props: {
         modalIsOpen: boolean,
         closeModal: Function,
         bookId?: string
     };
-
+    form: any = null;
     @observable book?: any = {};
 
     componentWillReceiveProps(nextProps) {
@@ -33,6 +54,7 @@ class BookEdit extends React.Component {
             if (rst.code === 1) {
                 runInAction(() => {
                     this.book = rst.data;
+
                 });
 
 
@@ -66,32 +88,23 @@ class BookEdit extends React.Component {
 
     }
 
+    index = 0;
+
+    addParagraph() {
+        var dynamicFields = this.form.$('dynamicFields');
+        var item = "p" + this.index;
+        // dynamicFields.add(item);
+        dynamicFields.add('', { key: item });
+        dynamicFields.$(item).set('placeholder', item);
+        dynamicFields.$(item).set('rules', 'required|string|between:1,200');
+        // dynamicFields.$(item).set('bindings', 'Input');
+        this.index++;
+    }
+
     render() {
 
+        var dynamicFields = this.form.$('dynamicFields');
 
-        const form: any = new MRForm({
-            fields: [
-                {
-                    value: this.book.cn_name,
-                    name: 'cn_name',
-                    label: '中文名',
-                    rules: 'required|string|between:5,200',
-                },
-                {
-                    value: this.book.en_name,
-                    name: 'en_name',
-                    label: '英文名',
-                    rules: 'required|string|between:5,200',
-                },
-                {
-                    value: this.book.intro,
-                    name: 'intro',
-                    label: '简介',
-                    rules: 'required|string|between:5,500',
-                }
-            ],
-            onSuccess: this.onSuccess.bind(this)
-        });
         return (
             <div className='book-edit'>
 
@@ -102,14 +115,22 @@ class BookEdit extends React.Component {
                     title="编辑书籍"
                     className="book-edit__modal"
                     closeModal={this.props.closeModal.bind(this)}
-                    saveModal={form.onSubmit}
+                    saveModal={this.form.onSubmit}
                 >
-                    <form className='book-edit__form' onSubmit={form.onSubmit}>
+                    <form className='book-edit__form' onSubmit={this.form.onSubmit}>
 
-                        <Input field={form.$('cn_name')}/>
-                        <Input field={form.$('en_name')}/>
-                        <Input field={form.$('intro')} type='textarea' rows={3}/>
+                        <Input field={this.form.$('cn_name')}/>
+                        <Input field={this.form.$('en_name')}/>
+                        <Input field={this.form.$('intro')} type='textarea' rows={3}/>
 
+                        {dynamicFields.map(field =>
+                            <Input
+                                key={field.name}
+                                field={field}
+                            />,
+                        )}
+
+                        <a onClick={this.addParagraph.bind(this)}>段落+</a>
                     </form>
                 </MlModal>
             </div>
