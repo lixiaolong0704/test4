@@ -1,6 +1,9 @@
 import './Button.scss';
 
 import * as React from 'react';
+import classnames from 'classnames';
+
+export type ButtonType = 'primary' | 'light' | 'dashed' | 'danger';
 
 export default class Button extends React.Component {
 
@@ -12,9 +15,9 @@ export default class Button extends React.Component {
     props: {
         onClick?: Function,
         children?: any,
-        type?: string,
+        type?: ButtonType,
         isLoading?: false
-    }
+    };
 
     onClick(e) {
         if (!this.props.isLoading) {
@@ -24,9 +27,13 @@ export default class Button extends React.Component {
 
     render() {
 
+        const {type} = this.props;
 
+        const classes = classnames('ml-button', {
+            [`ml-button--${type}`]: type
+        });
         return (
-            <button onClick={this.onClick.bind(this)} className='ml-button'>{
+            <button onClick={this.onClick.bind(this)} className={classes}>{
                 this.props.children
             }</button>
 

@@ -1,7 +1,13 @@
 .ml-input{
 
-  &__label{
 
+  margin:5px;
+  position: relative;
+  &__label{
+    width:100px;
+    text-align: right;
+    height: 30px;
+    line-height: 30px;
   }
   &__input{
     appearance: none;
@@ -45,6 +51,20 @@
   }
   &__error{
 
+    border-radius: 4px;
+    background-color: #ff6e64;
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    padding: 6px 10px;
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+    position: absolute;
+    right:-5px;
+    top: 30px;
+
+    word-break: keep-all;
+    white-space: nowrap;
+    transform:translateX(100%);
   }
 
 }

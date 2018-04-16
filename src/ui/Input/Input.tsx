@@ -21,7 +21,7 @@ export default class Input extends React.Component {
         placeholder?: string
         rows?: any,
         cols?: any
-    }
+    };
 
     renderInput(otherProps) {
         const {field} = this.props;
@@ -59,7 +59,7 @@ export default class Input extends React.Component {
                     {field.label}
                 </label>
                 {type === 'textarea' ? this.renderTextArea(otherProps) : this.renderInput(otherProps)}
-                <span className="ml-input__error">{field.error}</span>
+                {field.error ? <span className="ml-input__error">{field.error}</span> : ''}
             </div>
 
         );

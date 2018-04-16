@@ -3,4 +3,12 @@
 .book-manage {
   width: $mainWidth;
   margin: auto;
+  &__operation{
+
+    padding: 30px 0px;
+
+  }
+  &__pagination{
+    padding: 30px 0px;
+  }
 }

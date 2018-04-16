@@ -8,11 +8,12 @@ import {observable, computed, runInAction, action} from 'mobx';
 import {observer, Provider} from 'mobx-react';
 import api from '../../api';
 import {NavLink} from 'react-router-dom';
-import BookEdit from "./BookEdit";
-import {Button} from "ui/index";
+import BookEdit from './BookEdit';
+import {Button} from 'ui/index';
 import EditIcon from 'assets/svg/edit.svg';
 import DeleteIcon from 'assets/svg/delete.svg';
-
+import Pagination from 'rc-pagination';
+import 'rc-pagination/assets/index.css';
 @observer
 export default class BookManage extends React.Component {
 
@@ -22,22 +23,25 @@ export default class BookManage extends React.Component {
     };
     @observable data: any = {docs: []};
     @observable isLoading: boolean = false;
-    @observable isShowEdit: boolean = false;
+    @observable isShowEdit: boolean = true;
+
+    @observable current = 1;
+    @observable currentBookId =null;
+    pageSize=15;
 
 
     // @observable page:number=1;
 
 
     async componentDidMount() {
-        const {page} = this.props.location.match.params;
         // :page
-        this.loadData(page ? page : 1);
+        this.loadData(this.current);
     }
 
     @action
     async loadData(page, callback?) {
         var _t = this;
-        let rst = await api.get(`/book/getBooksOfPg/${page}`);
+        let rst = await api.get(`/book/getBooksOfPg/${page}/${this.pageSize}`);
         if (rst.code === 1) {
             runInAction(() => {
                 _t.data = rst.data;
@@ -69,48 +73,42 @@ export default class BookManage extends React.Component {
     }
 
 
+    @action
     onChange(page) {
-        this.loadData(page, () => {
-            this.props.location.history.push(`/admin_book/${page}`);
+        this.current = page;
+        this.loadData(this.current, () => {
+
         });
     }
 
     @action
-    showEdit(e) {
+    async showEdit(book_id?) {
         this.isShowEdit = true;
+        this.currentBookId = book_id;
     }
 
     @action
-    onCloseEdit() {
+    onCloseEdit(isUpdate) {
         this.isShowEdit = false;
+        if(isUpdate){
+            this.current=1;
+            this.loadData(this.current);
+
+        }
     }
 
     render() {
-        var {page} = this.props.location.match.params;
-        page = page ? parseInt(page) : 1;
-
-        var pageConfig = {
-            total: this.data.total,
-            defaultCurrent: page,
-            onChange: this.onChange.bind(this),
-            pageSize: 5
-
-        };
 
 
-        {/*<NavLink to="/about">About</NavLink>*/
-        }
 
-        // console.log(this.data.docs);
 
         var books = this.data.docs.map(d => d);
 
-
         return (
             <div className='book-manage'>
-                <BookEdit modalIsOpen={this.isShowEdit} closeModal={this.onCloseEdit.bind(this)}></BookEdit>
-                <div>
-                    <Button onClick={this.showEdit.bind(this)} type="primary">新增</Button>
+                <BookEdit modalIsOpen={this.isShowEdit} bookId={this.currentBookId} closeModal={this.onCloseEdit.bind(this)}></BookEdit>
+                <div className='book-manage__operation'>
+                    <Button onClick={e=>this.showEdit()} type="primary">新增</Button>
                     <Button onClick={this.importBook.bind(this)} type="primary">导入书籍</Button>
                 </div>
 
@@ -133,7 +131,7 @@ export default class BookManage extends React.Component {
                             <td>{b.en_name}</td>
                             <td>{b.create_time}</td>
                             <td>
-                                <span><EditIcon></EditIcon></span>
+                                <span onClick={e=>this.showEdit(b._id)}><EditIcon></EditIcon></span>
                                 <span><DeleteIcon></DeleteIcon></span>
                             </td>
                         </tr>)}
@@ -142,6 +140,10 @@ export default class BookManage extends React.Component {
 
                     </table>
 
+                    <div className='book-manage__pagination'>
+                        <Pagination className='ml-pagination' onChange={this.onChange.bind(this)} current={this.current} pageSize={this.pageSize} total={this.data.total}   />
+
+                    </div>
 
                     {/*<Table rowKey="_id" columns={columns} pagination={pageConfig} dataSource={dataSource} size="small"/>*/}
                 </div>

@@ -54,3 +54,15 @@ svg {
     }
   }
 }
+.ml-pagination{
+  .rc-pagination-item{
+
+  }
+  .rc-pagination-item-active{
+    background-color: $happyColor;
+    border:1px solid $happyColor;
+    &:hover{
+      border:1px solid $happyColor;
+    }
+  }
+}
