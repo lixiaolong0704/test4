@@ -137,7 +137,15 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                loader: require.resolve('source-map-loader'),
+                use:[
+                    {
+                        loader: require.resolve('babel-loader'),
+                    },
+                    {
+                        loader: require.resolve('source-map-loader'),
+                    }
+                ],
+
                 enforce: 'pre',
                 include: paths.appSrc,
             },

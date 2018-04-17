@@ -1,4 +1,6 @@
-import {Form} from 'mobx-react-form';
+// import {Form} from 'mobx-react-form';
+
+import {Form} from './mrf/index.js';
 import validatorjs from 'validatorjs';
 
 validatorjs.setMessages('cn', {
@@ -11,9 +13,10 @@ export default class MRForm extends Form {
     options: any;
 
     constructor(options?) {
-        super(options,{
-            options:{
-                showErrorsOnBlur:false
+        super(options, {
+            options: {
+                showErrorsOnBlur: false
+                // validateOnBlur:false
             }
         });
         this.options = Object.assign({
@@ -32,7 +35,6 @@ export default class MRForm extends Form {
     plugins() {
         return {dvr: validatorjs};
     }
-
 
 
     /*

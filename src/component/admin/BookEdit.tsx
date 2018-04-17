@@ -29,10 +29,8 @@ class BookEdit extends React.Component {
                     label: '简介',
                     rules: 'required|string|between:5,500',
                 },
-                'chapters':{},
-                'chapters[]': {
+                'chapters': {}
 
-                }
             },
             onSuccess: this.onSuccess.bind(this)
         });
@@ -72,7 +70,7 @@ class BookEdit extends React.Component {
                         $chapters.del(f.name);
                     });
                     _.map(this.book.chapters, (c) => {
-                        this.addBind($chapters, c._id, {
+                        this.addBind($chapters, "p" + c._id, {
                             placeholder: '',
                             rules: 'required|string|between:1,200',
                             value: c.title,
@@ -113,12 +111,17 @@ class BookEdit extends React.Component {
             var extra = $chapters.$(key).get('extra');
             ps.chapters.push({
                 title: v,
-                _id: extra?extra:undefined
+                _id: extra ? extra : undefined
             });
         });
+        let rst = null;
+        if (this.book._id) {
+            ps._id = this.book._id;
+            rst = await api.post(`/book/updateBook`, ps);
+        } else {
+            rst = await api.post(`/book/addBook`, ps);
+        }
 
-
-        let rst = await api.post(`/book/addBook`, ps);
         if (rst.code === 1) {
             runInAction(() => {
                 this.isLoading = false;
@@ -131,7 +134,7 @@ class BookEdit extends React.Component {
 
     addParagraph() {
         var dynamicFields = this.form.$('chapters');
-        var item = 'p' + parseInt(Math.random() * 1000 + '');
+        var item = "p" + parseInt(Math.random() * 1000 + '');
         this.addBind(dynamicFields, item, {
             placeholder: '',
             rules: 'required|string|between:1,200',
@@ -187,6 +190,14 @@ class BookEdit extends React.Component {
         </div>;
     }
 
+    saveModal(e) {
+
+
+        this.form.onSubmit(e);
+
+
+    }
+
     render() {
 
 
@@ -200,10 +211,10 @@ class BookEdit extends React.Component {
                     title="编辑书籍"
                     className="book-edit__modal"
                     closeModal={this.props.closeModal.bind(this)}
-                    saveModal={this.form.onSubmit}
+                    saveModal={this.saveModal.bind(this)}
                     enableScollbar={true}
                 >
-                    <form className='book-edit__form' onSubmit={this.form.onSubmit}>
+                    <form className='book-edit__form'>
 
                         <Input field={this.form.$('cn_name')}/>
                         <Input field={this.form.$('en_name')}/>
