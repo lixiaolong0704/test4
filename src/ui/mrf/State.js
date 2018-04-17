@@ -123,7 +123,7 @@ export default class State {
 
   __disposeValidationOnBlur(){
       this.form.each(field => {
-          field.disposeValidationOnBlur();
+          field.debouncedValidation.cancel();
       });
   }
   observeOptions() {
