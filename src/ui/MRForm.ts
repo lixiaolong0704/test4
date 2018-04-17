@@ -11,7 +11,11 @@ export default class MRForm extends Form {
     options: any;
 
     constructor(options?) {
-        super(options);
+        super(options,{
+            options:{
+                showErrorsOnBlur:false
+            }
+        });
         this.options = Object.assign({
             onSuccess: () => {
             },

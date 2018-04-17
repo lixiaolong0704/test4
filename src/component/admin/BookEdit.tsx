@@ -29,7 +29,10 @@ class BookEdit extends React.Component {
                     label: '简介',
                     rules: 'required|string|between:5,500',
                 },
-                'chapters': {}
+                'chapters':{},
+                'chapters[]': {
+
+                }
             },
             onSuccess: this.onSuccess.bind(this)
         });
@@ -45,6 +48,7 @@ class BookEdit extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if ((this.props.modalIsOpen !== nextProps.modalIsOpen) && nextProps.modalIsOpen) {
+            this.form.showErrors(false);
             this.getBookInfo(nextProps.bookId);
         }
     }
@@ -67,8 +71,8 @@ class BookEdit extends React.Component {
                     $chapters.map((f, index) => {
                         $chapters.del(f.name);
                     });
-                    _.map(this.book.chapters, (c, index) => {
-                        this.addBind($chapters, 'p' + index, {
+                    _.map(this.book.chapters, (c) => {
+                        this.addBind($chapters, c._id, {
                             placeholder: '',
                             rules: 'required|string|between:1,200',
                             value: c.title,
@@ -77,6 +81,7 @@ class BookEdit extends React.Component {
 
                         });
                     });
+
 
                 });
 
@@ -101,12 +106,24 @@ class BookEdit extends React.Component {
 
     async onSuccess(params) {
         this.isLoading = true;
-        let rst = await api.post(`/book/addBook`, params);
+        var ps = _.cloneDeep(params);
+        var $chapters = this.form.$('chapters');
+        ps.chapters = [];
+        _.mapValues(params.chapters, (v, key) => {
+            var extra = $chapters.$(key).get('extra');
+            ps.chapters.push({
+                title: v,
+                _id: extra?extra:undefined
+            });
+        });
+
+
+        let rst = await api.post(`/book/addBook`, ps);
         if (rst.code === 1) {
             runInAction(() => {
                 this.isLoading = false;
             });
-            this.props.closeModal(params);
+            this.props.closeModal(ps);
         }
 
     }
@@ -154,7 +171,7 @@ class BookEdit extends React.Component {
     renderChapters() {
         var chapters = this.form.$('chapters');
         return <div className='book-chapters'>
-            <label>段落</label>
+            <label>章节</label>
             <Icon onClick={this.addParagraph.bind(this)} svgId='add_v1'></Icon>
             <Icon onClick={this.removeLast.bind(this)} svgId='delete_v1'></Icon>
             <div className='book-chapters__content'>
