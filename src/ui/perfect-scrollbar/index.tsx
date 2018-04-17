@@ -16,19 +16,23 @@ export default class PerfectScrollbarApple extends React.Component {
     }
 
     componentDidMount() {
-
+        this.ps = new PerfectScrollbar(this.sbar, {
+            wheelPropagation: true,
+            suppressScrollX: true,
+            minScrollbarLength: 20
+        });
     }
 
     init(){
-        setTimeout(() => {
-            this.ps = new PerfectScrollbar(this.sbar, {
-                wheelPropagation: true,
-                suppressScrollX: true,
-                minScrollbarLength: 20
-            });
-            // this.ps.update();
-
-        });
+        // setTimeout(() => {
+        //     this.ps = new PerfectScrollbar(this.sbar, {
+        //         wheelPropagation: true,
+        //         suppressScrollX: true,
+        //         minScrollbarLength: 20
+        //     });
+        //     // this.ps.update();
+        //
+        // });
 
     }
 

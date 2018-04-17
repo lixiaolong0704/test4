@@ -2,6 +2,10 @@
 import * as React from 'react';
 import './App.scss';
 import 'antd/dist/antd.css';
+
+import 'react-select/dist/react-select.css';
+
+
 import PropTypes from 'prop-types';
 import {Layout,Form, Menu, Breadcrumb, Icon} from 'antd';
 

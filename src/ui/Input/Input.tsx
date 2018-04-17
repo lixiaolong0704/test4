@@ -52,12 +52,12 @@ export default class Input extends React.Component {
 
         return (
             <div className={classNames('ml-input', className)}>
-                <label
+                {field.label ? <label
                     htmlFor={field.id}
                     className="ml-input__label"
                 >
                     {field.label}
-                </label>
+                </label> : ''}
                 {type === 'textarea' ? this.renderTextArea(otherProps) : this.renderInput(otherProps)}
                 {field.error ? <span className="ml-input__error">{field.error}</span> : ''}
             </div>

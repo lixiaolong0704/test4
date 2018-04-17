@@ -10,3 +10,5 @@ export { default as DropdownApple } from './dropdown-apple/index';
 
 export { default as MRForm } from './MRForm';
 export { default as MlModal } from './MlModal/MlModal';
+
+export { default as Icon } from './Icon/Icon';
