@@ -9,16 +9,15 @@ import {observer, Provider} from 'mobx-react';
 import api from '../../api';
 import {NavLink} from 'react-router-dom';
 import BookEdit from './BookEdit';
-import {Button} from 'ui/index';
+import Import from './Import';
+import {Button, Icon} from 'ui/index';
 //
 //
-import EditIcon from 'assets/svg/edit.svg';
-import DeleteIcon from 'assets/svg/delete.svg';
-
 
 
 import Pagination from 'rc-pagination';
 import 'rc-pagination/assets/index.css';
+
 @observer
 export default class BookManage extends React.Component {
 
@@ -28,11 +27,11 @@ export default class BookManage extends React.Component {
     };
     @observable data: any = {docs: []};
     @observable isLoading: boolean = false;
-    @observable isShowEdit: boolean = true;
-
+    @observable isShowEdit: boolean = false;
+    @observable isShowImport: boolean = false;
     @observable current = 1;
-    @observable currentBookId =null;
-    pageSize=15;
+    @observable currentBookId = null;
+    pageSize = 15;
 
 
     // @observable page:number=1;
@@ -91,30 +90,39 @@ export default class BookManage extends React.Component {
         this.isShowEdit = true;
         this.currentBookId = book_id;
     }
-
+    @action
+    showImport(book_id){
+        this.isShowImport=true;
+        this.currentBookId = book_id;
+    }
     @action
     onCloseEdit(isUpdate) {
         this.isShowEdit = false;
-        if(isUpdate){
-            this.current=1;
+        if (isUpdate) {
+            this.current = 1;
             this.loadData(this.current);
 
         }
     }
+    @action
+    onCloseImport() {
+        this.isShowImport = false;
+    }
+
 
     render() {
-
-
 
 
         var books = this.data.docs.map(d => d);
 
         return (
             <div className='book-manage'>
-                <DeleteIcon></DeleteIcon>
-                <BookEdit modalIsOpen={this.isShowEdit} bookId={this.currentBookId} closeModal={this.onCloseEdit.bind(this)}></BookEdit>
+                <BookEdit modalIsOpen={this.isShowEdit} bookId={this.currentBookId}
+                          closeModal={this.onCloseEdit.bind(this)}></BookEdit>
+                <Import modalIsOpen={this.isShowImport} bookId={this.currentBookId}
+                        closeModal={this.onCloseImport.bind(this)}></Import>
                 <div className='book-manage__operation'>
-                    <Button onClick={e=>this.showEdit()} type="primary">新增</Button>
+                    <Button onClick={e => this.showEdit()} type="primary">新增</Button>
                     <Button onClick={this.importBook.bind(this)} type="primary">导入书籍</Button>
                 </div>
 
@@ -137,10 +145,9 @@ export default class BookManage extends React.Component {
                             <td>{b.en_name}</td>
                             <td>{b.create_time}</td>
                             <td>
-                                <span onClick={e=>this.showEdit(b._id)}>
-                                    <EditIcon></EditIcon>
-                                </span>
-                                <span><DeleteIcon></DeleteIcon></span>
+                                <Icon svgId='edit' onClick={e => this.showEdit(b._id)}></Icon>
+                                <Icon svgId='import-o' onClick={e=>this.showImport(b._id)}></Icon>
+                                <Icon svgId='delete'></Icon>
                             </td>
                         </tr>)}
                         </tbody>
@@ -149,7 +156,8 @@ export default class BookManage extends React.Component {
                     </table>
 
                     <div className='book-manage__pagination'>
-                        <Pagination className='ml-pagination' onChange={this.onChange.bind(this)} current={this.current} pageSize={this.pageSize} total={this.data.total}   />
+                        <Pagination className='ml-pagination' onChange={this.onChange.bind(this)} current={this.current}
+                                    pageSize={this.pageSize} total={this.data.total}/>
 
                     </div>
 
