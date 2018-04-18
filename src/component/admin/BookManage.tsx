@@ -17,6 +17,7 @@ import {Button, Icon} from 'ui/index';
 
 import Pagination from 'rc-pagination';
 import 'rc-pagination/assets/index.css';
+import SettingChapters from "./SettingChapters";
 
 @observer
 export default class BookManage extends React.Component {
@@ -29,6 +30,8 @@ export default class BookManage extends React.Component {
     @observable isLoading: boolean = false;
     @observable isShowEdit: boolean = false;
     @observable isShowImport: boolean = false;
+    @observable isShowSettingChapters: boolean = false;
+
     @observable current = 1;
     @observable currentBookId = null;
     pageSize = 15;
@@ -90,11 +93,19 @@ export default class BookManage extends React.Component {
         this.isShowEdit = true;
         this.currentBookId = book_id;
     }
+
     @action
-    showImport(book_id){
-        this.isShowImport=true;
+    showImport(book_id) {
+        this.isShowImport = true;
         this.currentBookId = book_id;
     }
+
+    @action
+    showSettingChapters(book_id) {
+        this.isShowSettingChapters = true;
+        this.currentBookId = book_id;
+    }
+
     @action
     onCloseEdit(isUpdate) {
         this.isShowEdit = false;
@@ -104,11 +115,17 @@ export default class BookManage extends React.Component {
 
         }
     }
+
     @action
     onCloseImport() {
         this.isShowImport = false;
     }
 
+
+    @action
+    onCloseSettingChapters() {
+        this.isShowSettingChapters = false;
+    }
 
     render() {
 
@@ -121,6 +138,10 @@ export default class BookManage extends React.Component {
                           closeModal={this.onCloseEdit.bind(this)}></BookEdit>
                 <Import modalIsOpen={this.isShowImport} bookId={this.currentBookId}
                         closeModal={this.onCloseImport.bind(this)}></Import>
+
+
+                {this.isShowSettingChapters ?
+                    <SettingChapters closeModal={this.onCloseSettingChapters.bind(this)} bookId={this.currentBookId}/> : ''}
                 <div className='book-manage__operation'>
                     <Button onClick={e => this.showEdit()} type="primary">新增</Button>
                     <Button onClick={this.importBook.bind(this)} type="primary">导入书籍</Button>
@@ -146,7 +167,8 @@ export default class BookManage extends React.Component {
                             <td>{b.create_time}</td>
                             <td>
                                 <Icon svgId='edit' onClick={e => this.showEdit(b._id)}></Icon>
-                                <Icon svgId='import-o' onClick={e=>this.showImport(b._id)}></Icon>
+                                <Icon svgId='import-o' onClick={e => this.showImport(b._id)}></Icon>
+                                <Icon svgId='import-o' onClick={e => this.showSettingChapters(b._id)}></Icon>
                                 <Icon svgId='delete'></Icon>
                             </td>
                         </tr>)}

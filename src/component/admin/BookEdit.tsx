@@ -47,14 +47,17 @@ class BookEdit extends React.Component {
     componentWillReceiveProps(nextProps) {
         if ((this.props.modalIsOpen !== nextProps.modalIsOpen) && nextProps.modalIsOpen) {
             this.form.showErrors(false);
+
             this.getBookInfo(nextProps.bookId);
         }
     }
 
     setValue(key) {
-        this.form.$(key).set('value', this.book[key]);
+        var $f = this.form.$(key);
+        $f && $f.set('value', this.book[key]);
     }
 
+    @action
     async getBookInfo(bookId) {
         if (bookId) {
             let rst = await api.get(`/book/getBookById/${bookId}`);
@@ -85,6 +88,12 @@ class BookEdit extends React.Component {
 
 
             }
+        }else{
+            this.form.clear();
+            var $chapters = this.form.$('chapters');
+            $chapters && $chapters.map((f, index) => {
+                $chapters.del(f.name);
+            });
         }
     }
 

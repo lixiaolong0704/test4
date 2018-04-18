@@ -21,13 +21,20 @@ export default class Input extends React.Component {
         placeholder?: string
         rows?: any,
         cols?: any
+        onChange?:Function
     };
 
     renderInput(otherProps) {
         const {field} = this.props;
-        return <input
+        return field?<input
+
             className="ml-input__input"
-            {...field.bind({...otherProps})}
+            {...field?field.bind({...otherProps}):{}}
+
+        />:<input
+
+            className="ml-input__input"
+            {...otherProps}
 
         />;
     }
@@ -50,16 +57,17 @@ export default class Input extends React.Component {
             'field'
         ]);
 
+
         return (
             <div className={classNames('ml-input', className)}>
-                {field.label ? <label
+                {field && field.label ? <label
                     htmlFor={field.id}
                     className="ml-input__label"
                 >
                     {field.label}
                 </label> : ''}
                 {type === 'textarea' ? this.renderTextArea(otherProps) : this.renderInput(otherProps)}
-                {field.error ? <span className="ml-input__error">{field.error}</span> : ''}
+                {field && field.error ? <span className="ml-input__error">{field.error}</span> : ''}
             </div>
 
         );

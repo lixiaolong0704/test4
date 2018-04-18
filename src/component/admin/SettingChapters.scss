@@ -1,0 +1,26 @@
+@import "../../vars";
+.setting-chapters {
+  &__modal {
+    height: 500px;
+  }
+  &__content{
+    display: flex;
+    height: 100%;
+    width:100%;
+    flex-direction: row;
+  }
+  &__chapters {
+
+    height: 100%;
+    width: 30%;
+    list-style-type: none;
+    li {
+      height: 30px;
+      line-height: 30px;
+    }
+    border-right: 1px solid $dismayColor;
+  }
+  &__paragraphs {
+
+  }
+}
