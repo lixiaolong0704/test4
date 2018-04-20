@@ -42,7 +42,7 @@ export default class SettingChapters extends React.Component {
             runInAction(() => {
                 console.log(prst.data)
 
-                this.paragraphs = prst.data ? prst.data.paragraphs : [];
+                this.paragraphs = (prst.data && prst.data[0]) ? prst.data[0].paragraphs : [];
             });
 
 
@@ -82,13 +82,13 @@ export default class SettingChapters extends React.Component {
 
                             <Input onChange={this.onChange.bind(this)} value={this.condition}/><Button
                             onClick={this.query.bind(this)}>查询</Button>
-                            <ul>
+                            <div>
                                 {
-                                    this.paragraphs ? this.paragraphs.map(c => <li key={c._id}>
+                                    this.paragraphs ? this.paragraphs.map(c => <p key={c._id} className='setting-chapters__paragraph'>
                                         {c.en_content}
-                                    </li>) : ''
+                                    </p>) : ''
                                 }
-                            </ul>
+                            </div>
 
                         </div>
                     </div>

@@ -1,26 +1,35 @@
 @import "../../vars";
+
 .setting-chapters {
   &__modal {
     height: 500px;
   }
-  &__content{
+  &__content {
     display: flex;
     height: 100%;
-    width:100%;
+    width: 100%;
     flex-direction: row;
   }
   &__chapters {
 
     height: 100%;
-    width: 30%;
+    width: 200px;
     list-style-type: none;
     li {
       height: 30px;
       line-height: 30px;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow-ellipsis: '...';
     }
     border-right: 1px solid $dismayColor;
   }
   &__paragraphs {
 
+    width: 480px;
+
+  }
+  &__paragraph{
+    padding: 5px;
   }
 }
