@@ -1,6 +1,12 @@
 @import "../../vars";
 
 .setting-chapters {
+
+
+  &__target{
+    position: relative;
+  }
+
   &__modal {
     height: 500px;
   }
@@ -13,11 +19,11 @@
   &__chapters {
 
     height: 100%;
-    width: 200px;
+    width:300px;
     list-style-type: none;
     li {
-      height: 30px;
-      line-height: 30px;
+      //height: 30px;
+      //line-height: 30px;
       overflow: hidden;
       display: inline-block;
       text-overflow-ellipsis: '...';
@@ -26,7 +32,7 @@
   }
   &__paragraphs {
 
-    width: 480px;
+    width: 380px;
 
   }
   &__paragraph{
