@@ -27,15 +27,18 @@ export default class FragmentList extends React.Component {
         this.props.onUpdateCurrentFragment(item);
     }
 
+    @action
     async loadData(page: number, pageSize?) {
-        let rst = await api.get(`http://localhost:4000/getFragmentsOfPg/${page}`);
+        let rst = await api.get(`http://localhost:4000/fragment/getFragmentsOfPg/${page}`);
         // console.log(rst);
-        this.setState({
-            page,
-            fragmentsList: rst.data.data.docs,
-            total: parseInt(rst.data.data.total)
-        });
-        this.setCurrent({});
+
+        runInAction(()=>{
+            this.fragmentsList = rst.data.docs;
+            this.page = page;
+            this.total =  parseInt(rst.data.total);
+            this.setCurrent({});
+        })
+
 
     }
 
@@ -50,12 +53,12 @@ export default class FragmentList extends React.Component {
         return (
             <div>
                 <div>
-                    {this.fragmentsList?this.fragmentsList.map((item)=>{
+                    {this.fragmentsList?this.fragmentsList.map((item)=>
                         <div>
                             <span onClick={() => this.setCurrent(item)}>{item.name}</span>
                             <span>{item.ref_link}</span>
                         </div>
-                    }):''}
+                    ):''}
                 </div>
 
 

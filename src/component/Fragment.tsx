@@ -9,7 +9,7 @@ const AutoCompleteOption = AutoComplete.Option;
 
 import * as React from 'react';
 import {unescape} from "querystring";
-import axios from 'axios';
+import api from '../api';
 
 export default class Fragment extends React.Component {
 
@@ -28,12 +28,12 @@ export default class Fragment extends React.Component {
         if (this.state && this.state.current) {
 
             if(this.state.current._id){ //add
-                let rst = await axios.post('http://localhost:4000/updateFragment', this.state.current);
+                let rst = await api.post('http://localhost:4000/fragment/updateFragment', this.state.current);
                 if (rst.data.code === 1) {
                     alert('ok...');
                 }
             }else{                      //update
-                let rst = await axios.post('http://localhost:4000/addFragment', this.state.current);
+                let rst = await api.post('http://localhost:4000/fragment/addFragment', this.state.current);
                 if (rst.data.code === 1) {
                     const current = this.state.current;
                     if (current) {
